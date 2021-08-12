@@ -1,7 +1,5 @@
 package com.example.chatapp;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
@@ -9,24 +7,19 @@ import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.EditText;
 
-public class Login extends AppCompatActivity {
+import androidx.appcompat.app.AppCompatActivity;
+
+public class CreateAccount extends AppCompatActivity {
     EditText passwordET;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_create_account);
+
         passwordET = findViewById(R.id.passwordET);
-    }
 
-    public void GoToHome(View view) {
-        Intent intent = new Intent(this,ChatHome.class);
-        startActivity(intent);
-    }
 
-    public void GoToCreateAccount(View view) {
-        Intent intent = new Intent(this,CreateAccount.class);
-        startActivity(intent);
     }
 
     public void ShowHidePass(View view) {
@@ -42,5 +35,13 @@ public class Login extends AppCompatActivity {
 
             }
         }
+    }
+
+    public void GoToHome(View view) {
+    }
+
+    public void GoToLogin(View view) {
+        Intent intent = new Intent(this,Login.class);
+        startActivity(intent);
     }
 }
