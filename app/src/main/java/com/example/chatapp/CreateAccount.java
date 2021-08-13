@@ -2,7 +2,6 @@ package com.example.chatapp;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
@@ -18,21 +17,24 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.squareup.picasso.Picasso;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 public class CreateAccount extends AppCompatActivity {
     EditText passwordET, emailET, phoneET, nameET;
-    String password, email, phone, name;
+    String password, email, phone, name, photo;
     ImageView profileImage;
     Uri profileAvatar;
-
     FirebaseAuth firebaseAuth;
     DatabaseReference databaseReference;
+    StorageReference storageReference;
 
 
     @Override
@@ -69,25 +71,62 @@ public class CreateAccount extends AppCompatActivity {
     }
 
     public void GoToHome(View view) {
-//        email = emailET.getText().toString().trim();
-//        password = passwordET.getText().toString().trim();
-//        phone = phoneET.getText().toString().trim();
-//        name = nameET.getText().toString().trim();
-//
-//        if (!email.equals("") & !phone.equals("") & !name.equals("") & !password.equals("")) {
-//            firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-//                @Override
-//                public void onComplete(@NonNull Task<AuthResult> task) {
-//                    if (task.isSuccessful()) {
-//                        User user = new User(name, email, password, phone);
-//                    }
-//
-//                }
-//            });
-//        }
+        email = emailET.getText().toString().trim();
+        password = passwordET.getText().toString().trim();
+        phone = phoneET.getText().toString().trim();
+        name = nameET.getText().toString().trim();
+        photo = profileAvatar.toString().trim();
 
-        Intent intent = new Intent(this, ChatHome.class);
-        startActivity(intent);
+        if (!email.equals("") & !phone.equals("") & !name.equals("") & !password.equals("") & !photo.equals("")) {
+            firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        User user = new User(name, email, password, phone);
+
+                        databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).setValue(user)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        uploadImageToFirebase();
+                                    }
+                                });
+                    } else {
+                        Toast.makeText(getApplicationContext(), "check email or password", Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+            });
+        } else {
+            Toast.makeText(this, "data is missing", Toast.LENGTH_SHORT).show();
+
+        }
+
+    }
+
+    private void uploadImageToFirebase() {
+        storageReference = FirebaseStorage.getInstance().getReference(firebaseAuth.getCurrentUser().getUid());
+        storageReference.putFile(profileAvatar).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        photo = uri.toString();
+                        databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid())
+                                .child("photo").setValue(photo).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Intent intent = new Intent(getApplicationContext(), ChatHome.class);
+                                startActivity(intent);
+                            }
+                        });
+
+
+                    }
+                });
+            }
+        });
     }
 
     public void GoToLogin(View view) {
