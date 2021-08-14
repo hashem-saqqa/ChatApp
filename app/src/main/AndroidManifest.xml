@@ -18,7 +18,12 @@
         <activity android:name=".Chat"></activity>
         <activity
             android:name=".ChatHome"
-            android:theme="@style/AppTheme_ForAppBar" />
+            android:theme="@style/AppTheme_ForAppBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <!--
                Set to true if your app is Standalone, that is, it does not require the handheld
                app to run.
@@ -31,11 +36,7 @@
             android:name=".CreateAccount"
             android:label="@string/title_activity_create_account" />
         <activity android:name=".Login">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

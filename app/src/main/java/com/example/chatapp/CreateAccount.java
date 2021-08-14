@@ -82,7 +82,7 @@ public class CreateAccount extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-                        User user = new User(name, email, password, phone);
+                        User user = new User(name, email, phone);
 
                         databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).setValue(user)
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {

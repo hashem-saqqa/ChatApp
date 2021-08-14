@@ -66,31 +66,31 @@
             android:textSize="15dp"
             android:textColor="#CCCCCC"
             />
-        <ImageView
-            android:id="@+id/readStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/read"
-            app:layout_constraintHorizontal_bias="1"
-            app:layout_constraintVertical_bias="1"
-            android:layout_marginBottom="10dp"
-            />
-        <ImageView
-            android:id="@+id/status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@id/profileImage"
-            app:layout_constraintEnd_toEndOf="@id/profileImage"
-            app:layout_constraintTop_toTopOf="@id/profileImage"
-            app:layout_constraintBottom_toBottomOf="@id/profileImage"
-            android:src="@drawable/status"
-            app:layout_constraintVertical_bias="1"
-            app:layout_constraintHorizontal_bias="1"
-            />
+
+<!--        <ImageView-->
+<!--            android:id="@+id/readStatus"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginBottom="10dp"-->
+<!--            android:src="@drawable/read"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintHorizontal_bias="1.0"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            app:layout_constraintVertical_bias="1.0" />-->
+        <!--        <ImageView-->
+<!--            android:id="@+id/status"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:layout_constraintStart_toStartOf="@id/profileImage"-->
+<!--            app:layout_constraintEnd_toEndOf="@id/profileImage"-->
+<!--            app:layout_constraintTop_toTopOf="@id/profileImage"-->
+<!--            app:layout_constraintBottom_toBottomOf="@id/profileImage"-->
+<!--            android:src="@drawable/status"-->
+<!--            app:layout_constraintVertical_bias="1"-->
+<!--            app:layout_constraintHorizontal_bias="1"-->
+<!--            />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
