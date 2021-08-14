@@ -3,16 +3,26 @@ package com.example.chatapp;
 import android.net.Uri;
 
 public class ChatHomeModel {
+    private String userId;
     private String profileImage;
     private String userName;
     private String time;
     private String lastMsg;
 
-    public ChatHomeModel(String profileImage, String userName, String time, String lastMsg) {
+    public ChatHomeModel(String userId, String profileImage, String userName, String time, String lastMsg) {
         this.profileImage = profileImage;
         this.userName = userName;
         this.time = time;
         this.lastMsg = lastMsg;
+        this.userId = userId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getProfileImage() {

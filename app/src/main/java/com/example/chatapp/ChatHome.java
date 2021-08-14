@@ -51,6 +51,7 @@ public class ChatHome extends AppCompatActivity {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 
                     dataSet.add(new ChatHomeModel(
+                            dataSnapshot.getKey(),
                             dataSnapshot.child("photo").getValue(String.class),
                             dataSnapshot.child("name").getValue(String.class),
                             "9:00 pm",
@@ -60,7 +61,7 @@ public class ChatHome extends AppCompatActivity {
                 recyclerView = findViewById(R.id.chatHomeRV);
                 linearLayoutManager = new LinearLayoutManager(getApplicationContext());
                 recyclerView.setLayoutManager(linearLayoutManager);
-                chatHomeAdapter = new ChatHomeAdapter(dataSet);
+                chatHomeAdapter = new ChatHomeAdapter(ChatHome.this,dataSet);
                 recyclerView.setAdapter(chatHomeAdapter);
             }
 

@@ -1,5 +1,7 @@
 package com.example.chatapp;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +19,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChatHomeAdapter extends RecyclerView.Adapter<ChatHomeAdapter.ViewHolder> {
     private List<ChatHomeModel> DataSet;
-    private OnUserListener onUserListener;
+    Context context;
+//    private OnUserListener onUserListener;
 
-    public ChatHomeAdapter(List<ChatHomeModel> dataSet) {
+    public ChatHomeAdapter(Context context, List<ChatHomeModel> dataSet) {
+        this.context = context;
         DataSet = dataSet;
     }
 
@@ -29,7 +33,7 @@ public class ChatHomeAdapter extends RecyclerView.Adapter<ChatHomeAdapter.ViewHo
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View rootView = inflater.inflate(R.layout.chat_home_item, parent, false);
 
-        ChatHomeAdapter.ViewHolder viewHolder = new ChatHomeAdapter.ViewHolder(rootView, onUserListener);
+        ChatHomeAdapter.ViewHolder viewHolder = new ChatHomeAdapter.ViewHolder(rootView);
 
         return viewHolder;
     }
@@ -44,6 +48,15 @@ public class ChatHomeAdapter extends RecyclerView.Adapter<ChatHomeAdapter.ViewHo
         holder.time.setText(chatHomeModel.getTime());
         holder.lastMsg.setText(chatHomeModel.getLastMsg());
 
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context,Chat.class);
+                intent.putExtra("userId",chatHomeModel.getUserId());
+                context.startActivity(intent);
+            }
+        });
+
 
     }
 
@@ -52,20 +65,20 @@ public class ChatHomeAdapter extends RecyclerView.Adapter<ChatHomeAdapter.ViewHo
         return DataSet.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         private final CircleImageView profileImage;
         private final TextView userName;
         private final TextView lastMsg;
         private final TextView time;
 
-        OnUserListener onUserListener;
+//        OnUserListener onUserListener;
 
-        public ViewHolder(@NonNull View itemView, OnUserListener onUserListener) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            this.onUserListener = onUserListener;
-            itemView.setOnClickListener(this);
+//            this.onUserListener = onUserListener;
+//            itemView.setOnClickListener(this);
 
             profileImage = itemView.findViewById(R.id.profileImage);
             userName = itemView.findViewById(R.id.userName);
@@ -74,14 +87,14 @@ public class ChatHomeAdapter extends RecyclerView.Adapter<ChatHomeAdapter.ViewHo
 
         }
 
-        @Override
-        public void onClick(View v) {
-            onUserListener.OnUserClick(getAdapterPosition());
+//        @Override
+//        public void onClick(View v) {
+////            onUserListener.OnUserClick(getAdapterPosition());
+//
+//        }
+//    }
 
-        }
-    }
-
-    public interface OnUserListener {
-        void OnUserClick(int postion);
+//    public interface OnUserListener {
+//        void OnUserClick(int postion);
     }
 }
