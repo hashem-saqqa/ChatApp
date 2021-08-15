@@ -68,7 +68,7 @@
     android:layout_height="0dp"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintBottom_toTopOf="@id/messageET"
+    app:layout_constraintBottom_toTopOf="@id/messageLL"
     app:layout_constraintTop_toBottomOf="@id/receiverStatus"
     app:layout_constraintVertical_bias="0"
     android:layout_marginTop="20dp"
@@ -83,7 +83,7 @@
 </LinearLayout>
 
 <LinearLayout
-    android:id="@+id/messageCL"
+    android:id="@+id/messageLL"
     android:layout_width="match_parent"
     android:layout_height="55dp"
     android:layout_marginHorizontal="20dp"
