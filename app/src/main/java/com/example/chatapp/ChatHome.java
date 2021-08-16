@@ -6,12 +6,16 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.shape.CornerFamily;
 import com.google.android.material.shape.MaterialShapeDrawable;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,6 +33,7 @@ public class ChatHome extends AppCompatActivity {
     RecyclerView recyclerView;
     LinearLayoutManager linearLayoutManager;
     ChatHomeAdapter chatHomeAdapter;
+    FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +43,7 @@ public class ChatHome extends AppCompatActivity {
         getSupportActionBar().hide();
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
+        firebaseAuth = FirebaseAuth.getInstance();
 
         getTheRecents();
 
@@ -49,14 +55,16 @@ public class ChatHome extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    if (!dataSnapshot.getKey().equals(firebaseAuth.getCurrentUser().getUid())) {
+                        dataSet.add(new ChatHomeModel(
+                                dataSnapshot.getKey(),
+                                dataSnapshot.child("photo").getValue(String.class),
+                                dataSnapshot.child("name").getValue(String.class),
+                                "9:00 pm",
+                                "whatever"
+                        ));
+                    }
 
-                    dataSet.add(new ChatHomeModel(
-                            dataSnapshot.getKey(),
-                            dataSnapshot.child("photo").getValue(String.class),
-                            dataSnapshot.child("name").getValue(String.class),
-                            "9:00 pm",
-                            "whatever"
-                    ));
                 }
                 recyclerView = findViewById(R.id.chatHomeRV);
                 linearLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -70,5 +78,13 @@ public class ChatHome extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void newMessage(View view) {
+        Intent intent = new Intent(getApplicationContext(), Login.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        firebaseAuth.signOut();
+        Toast.makeText(this, "Logout Successful", Toast.LENGTH_SHORT).show();
     }
 }

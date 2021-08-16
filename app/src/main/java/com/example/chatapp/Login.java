@@ -55,6 +55,7 @@ public class Login extends AppCompatActivity {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
                         Intent intent = new Intent(getApplicationContext(), ChatHome.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                     } else {
                         Toast.makeText(Login.this, "check the email or the password", Toast.LENGTH_SHORT).show();
@@ -79,11 +80,24 @@ public class Login extends AppCompatActivity {
 
                 //Show Password
                 passwordET.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                passwordET.setSelection(passwordET.getText().toString().length());
+
             } else {
                 //Hide Password
                 passwordET.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                passwordET.setSelection(passwordET.getText().toString().length());
 
             }
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            Intent intent = new Intent(getApplicationContext(), ChatHome.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
         }
     }
 }

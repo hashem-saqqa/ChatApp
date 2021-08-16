@@ -47,9 +47,6 @@ public class MessageModel {
     }
 
     public String getTime() {
-        String hour = time.substring(8,10);
-        String minute = time.substring(11,13);
-
         return time;
     }
 

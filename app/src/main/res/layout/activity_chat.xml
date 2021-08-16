@@ -113,6 +113,7 @@
         android:textColorHint="#CCCCCC"
         android:textColor="#CCCCCC"
         android:layout_gravity="center"
+        android:textSize="15dp"
         />
     <ImageView
         android:id="@+id/cameraBtn"

@@ -38,10 +38,12 @@
                 android:layout_marginLeft="80dp"
                 android:src="@drawable/camera"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/chatIcon"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toEndOf="@id/phoneIcon"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginHorizontal="20dp"
+                />
 
             <ImageView
                 android:id="@+id/chatIcon"
@@ -54,7 +56,9 @@
                 app:layout_constraintHorizontal_bias="1"
                 app:layout_constraintStart_toEndOf="@id/cameraIcon"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="#878787" />
+                app:tint="#878787"
+                android:layout_marginHorizontal="20dp"
+                />
 
             <ImageView
                 android:id="@+id/peopleIcon"

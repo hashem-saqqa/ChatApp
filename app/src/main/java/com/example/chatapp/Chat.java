@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.icu.text.SimpleDateFormat;
+import android.icu.util.TimeZone;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -37,6 +38,7 @@ public class Chat extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     List<MessageModel> dataSet;
     RecyclerView recyclerView;
+    LinearLayoutManager linearLayoutManager;
 
 
     @Override
@@ -106,6 +108,7 @@ public class Chat extends AppCompatActivity {
     public void sendVoiceOrMsg(View view) {
         if (!messageET.getText().toString().equals("")) {
             createMessage();
+            messageET.getText().clear();
         } else {
 
         }
@@ -118,6 +121,7 @@ public class Chat extends AppCompatActivity {
     private void createMessage() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
         String currentTime = sdf.format(new Date());
+
         Log.d("TAGgg", "createMessage: " + currentTime);
 
         MessageModel message = new MessageModel(firebaseAuth.getCurrentUser().getUid()
@@ -132,16 +136,12 @@ public class Chat extends AppCompatActivity {
 
         dataSet = new ArrayList<>();
 
-        databaseReference.child("messages").orderByChild("time").addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReference.child("messages").orderByChild("time").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
+                dataSet.clear();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 
-                    Log.d("TAGgg3", "onDataChange: " + dataSnapshot);
-//
-//                    Log.d("TAGgg test", "onDataChange: " + dataSnapshot.child("receiver").getValue(String.class));
-//                    Log.d("TAGgg test", "onDataChange: " + dataSnapshot);
 
                     if (dataSnapshot.child("receiver").getValue(String.class).equals(userId) &
                             dataSnapshot.child("sender").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid()) |
@@ -149,7 +149,6 @@ public class Chat extends AppCompatActivity {
                                     dataSnapshot.child("receiver").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid())
                     ) {
 
-                        Log.d("TAGgg2", "onDataChange: " + dataSnapshot);
 
                         dataSet.add(new MessageModel(
                                 dataSnapshot.child("sender").getValue(String.class),
@@ -158,7 +157,6 @@ public class Chat extends AppCompatActivity {
                                 dataSnapshot.child("messageText").getValue(String.class),
                                 receiverImage));
 
-                        Log.d("TAGgg", "onDataChange: " + dataSnapshot);
 
                     } else {
                         Log.d("TAGgg2", "onDataChange: there is no messages between them");
@@ -167,7 +165,9 @@ public class Chat extends AppCompatActivity {
                 }
 
                 recyclerView = findViewById(R.id.messagesRV);
-                recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                linearLayoutManager = new LinearLayoutManager(getApplicationContext());
+                linearLayoutManager.setStackFromEnd(true);
+                recyclerView.setLayoutManager(linearLayoutManager);
                 recyclerView.setAdapter(new ChatSenderAdapter(dataSet, Chat.this));
             }
 

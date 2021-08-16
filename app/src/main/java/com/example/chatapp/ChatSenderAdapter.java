@@ -1,6 +1,7 @@
 package com.example.chatapp;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ChatSenderAdapter extends RecyclerView.Adapter<ChatSenderAdapter.ViewHolder> {
+public class ChatSenderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<MessageModel> dataSet;
     Context context;
     FirebaseAuth firebaseAuth;
@@ -29,39 +30,61 @@ public class ChatSenderAdapter extends RecyclerView.Adapter<ChatSenderAdapter.Vi
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.receiver_item, parent, false);
-        ChatSenderAdapter.ViewHolder viewHolder = new ChatSenderAdapter.ViewHolder(view);
+        View receiverView = LayoutInflater.from(parent.getContext()).inflate(R.layout.receiver_message_item, parent, false);
+        View senderView = LayoutInflater.from(parent.getContext()).inflate(R.layout.sender_message_item, parent, false);
 
-        return viewHolder;
+        if (viewType == 0) {
+
+            return new SenderViewHolder(senderView);
+
+        } else if (viewType == 1) {
+
+            return new ReceiverViewHolder(receiverView);
+
+        }
+        return null;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
-        MessageModel messageModel = dataSet.get(position);
+    public int getItemViewType(int position) {
         firebaseAuth = FirebaseAuth.getInstance();
 
-        if (messageModel.getSender().equals(firebaseAuth.getCurrentUser().getUid())) {
+        if (dataSet.get(position).getSender().equals(firebaseAuth.getCurrentUser().getUid())) {
+            return 0;
+        } else if (dataSet.get(position).getReceiver().equals(firebaseAuth.getCurrentUser().getUid())) {
+            return 1;
+        }
+        return 2;
+    }
 
-            holder.senderMessage.setText(messageModel.getMessageText());
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+
+        MessageModel messageModel = dataSet.get(position);
+
+        if (holder.getItemViewType() == 0) {
+            SenderViewHolder senderViewHolder = (SenderViewHolder) holder;
 
             String hour = messageModel.getTime().substring(8, 10);
             String minute = messageModel.getTime().substring(10, 12);
 
-            holder.senderMessageTime.setText(hour + ":" + minute);
+            senderViewHolder.senderMessage.setText(messageModel.getMessageText());
+            senderViewHolder.senderMessageTime.setText(hour + ":" + minute);
 
-            holder.receiverCL.setVisibility(View.GONE);
-            holder.profileImage.setVisibility(View.GONE);
+        } else if (holder.getItemViewType() == 1) {
 
-        } else if (messageModel.getReceiver().equals(firebaseAuth.getCurrentUser().getUid())) {
+            Log.d("TAGG", "onBindViewHolder: " + holder.getItemViewType());
 
-            Picasso.get().load(messageModel.getReceiverImage()).into(holder.profileImage);
-            holder.receiverMessage.setText(messageModel.getMessageText());
-            holder.receiverMessageTime.setText(messageModel.getTime());
-            holder.senderCL.setVisibility(View.GONE);
+            ReceiverViewHolder receiverViewHolder = (ReceiverViewHolder) holder;
+
+            String hour = messageModel.getTime().substring(8, 10);
+            String minute = messageModel.getTime().substring(10, 12);
+
+            Picasso.get().load(messageModel.getReceiverImage()).into(receiverViewHolder.profileImage);
+            receiverViewHolder.receiverMessage.setText(messageModel.getMessageText());
+            receiverViewHolder.receiverMessageTime.setText(hour + ":" + minute);
         }
 
 
@@ -72,25 +95,30 @@ public class ChatSenderAdapter extends RecyclerView.Adapter<ChatSenderAdapter.Vi
         return dataSet.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ReceiverViewHolder extends RecyclerView.ViewHolder {
 
         private final CircleImageView profileImage;
-        private final TextView senderMessage;
         private final TextView receiverMessage;
-        private final TextView senderMessageTime;
         private final TextView receiverMessageTime;
-        private final ConstraintLayout senderCL;
-        private final ConstraintLayout receiverCL;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ReceiverViewHolder(@NonNull View itemView) {
             super(itemView);
             profileImage = itemView.findViewById(R.id.profileImage);
-            senderMessage = itemView.findViewById(R.id.messageSenderTV);
             receiverMessage = itemView.findViewById(R.id.messageReceiverTV);
-            senderMessageTime = itemView.findViewById(R.id.timeSenderTV);
             receiverMessageTime = itemView.findViewById(R.id.timeReceiverTV);
-            senderCL = itemView.findViewById(R.id.messageSenderCL);
-            receiverCL = itemView.findViewById(R.id.messageReceiverCL);
+
+        }
+    }
+
+    public class SenderViewHolder extends RecyclerView.ViewHolder {
+
+        private final TextView senderMessage;
+        private final TextView senderMessageTime;
+
+        public SenderViewHolder(@NonNull View itemView) {
+            super(itemView);
+            senderMessage = itemView.findViewById(R.id.messageSenderTV);
+            senderMessageTime = itemView.findViewById(R.id.timeSenderTV);
 
         }
     }

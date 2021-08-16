@@ -62,9 +62,13 @@ public class CreateAccount extends AppCompatActivity {
 
                 //Show Password
                 passwordET.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                passwordET.setSelection(passwordET.getText().toString().length());
+
             } else {
                 //Hide Password
                 passwordET.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                passwordET.setSelection(passwordET.getText().toString().length());
+
 
             }
         }
