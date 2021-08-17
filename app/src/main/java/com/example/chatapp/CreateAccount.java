@@ -78,7 +78,7 @@ public class CreateAccount extends AppCompatActivity {
         email = emailET.getText().toString().trim();
         password = passwordET.getText().toString().trim();
         phone = phoneET.getText().toString().trim();
-        name = nameET.getText().toString().trim();
+        name = nameET.getText().toString().trim().toLowerCase();
         photo = profileAvatar.toString().trim();
 
         if (!email.equals("") & !phone.equals("") & !name.equals("") & !password.equals("") & !photo.equals("")) {

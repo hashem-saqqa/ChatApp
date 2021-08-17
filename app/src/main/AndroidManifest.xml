@@ -17,12 +17,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ChatApp">
-        <activity android:name=".Chat"></activity>
+        <activity android:name=".NewMessage"></activity>
+        <activity android:name=".Chat" />
         <activity
             android:name=".ChatHome"
-            android:theme="@style/AppTheme_ForAppBar">
-
-        </activity>
+            android:theme="@style/AppTheme_ForAppBar"></activity>
         <!--
                Set to true if your app is Standalone, that is, it does not require the handheld
                app to run.
@@ -37,6 +36,7 @@
         <activity android:name=".Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
