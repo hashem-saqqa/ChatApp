@@ -18,12 +18,12 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ChatSenderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<MessageModel> dataSet;
     Context context;
     FirebaseAuth firebaseAuth;
 
-    public ChatSenderAdapter(List<MessageModel> dataSet, Context context) {
+    public ChatAdapter(List<MessageModel> dataSet, Context context) {
         this.dataSet = dataSet;
         this.context = context;
     }

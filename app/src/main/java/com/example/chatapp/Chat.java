@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.icu.text.SimpleDateFormat;
-import android.icu.util.TimeZone;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -168,7 +167,7 @@ public class Chat extends AppCompatActivity {
                 linearLayoutManager = new LinearLayoutManager(getApplicationContext());
                 linearLayoutManager.setStackFromEnd(true);
                 recyclerView.setLayoutManager(linearLayoutManager);
-                recyclerView.setAdapter(new ChatSenderAdapter(dataSet, Chat.this));
+                recyclerView.setAdapter(new ChatAdapter(dataSet, Chat.this));
             }
 
             @Override

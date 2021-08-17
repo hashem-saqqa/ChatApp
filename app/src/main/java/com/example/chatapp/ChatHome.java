@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -35,6 +36,7 @@ public class ChatHome extends AppCompatActivity {
     ChatHomeAdapter chatHomeAdapter;
     FirebaseAuth firebaseAuth;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,8 +51,11 @@ public class ChatHome extends AppCompatActivity {
 
     }
 
+
     private void getTheRecents() {
+
         dataSet = new ArrayList<>();
+
         databaseReference.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -59,9 +64,7 @@ public class ChatHome extends AppCompatActivity {
                         dataSet.add(new ChatHomeModel(
                                 dataSnapshot.getKey(),
                                 dataSnapshot.child("photo").getValue(String.class),
-                                dataSnapshot.child("name").getValue(String.class),
-                                "9:00 pm",
-                                "whatever"
+                                dataSnapshot.child("name").getValue(String.class)
                         ));
                     }
 
@@ -69,7 +72,7 @@ public class ChatHome extends AppCompatActivity {
                 recyclerView = findViewById(R.id.chatHomeRV);
                 linearLayoutManager = new LinearLayoutManager(getApplicationContext());
                 recyclerView.setLayoutManager(linearLayoutManager);
-                chatHomeAdapter = new ChatHomeAdapter(ChatHome.this,dataSet);
+                chatHomeAdapter = new ChatHomeAdapter(ChatHome.this, dataSet);
                 recyclerView.setAdapter(chatHomeAdapter);
             }
 
@@ -82,7 +85,7 @@ public class ChatHome extends AppCompatActivity {
 
     public void newMessage(View view) {
         Intent intent = new Intent(getApplicationContext(), Login.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         firebaseAuth.signOut();
         Toast.makeText(this, "Logout Successful", Toast.LENGTH_SHORT).show();

@@ -16,6 +16,11 @@ public class ChatHomeModel {
         this.lastMsg = lastMsg;
         this.userId = userId;
     }
+    public ChatHomeModel(String userId, String profileImage, String userName) {
+        this.profileImage = profileImage;
+        this.userName = userName;
+        this.userId = userId;
+    }
 
     public String getUserId() {
         return userId;

@@ -2,6 +2,7 @@ package com.example.chatapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,16 +11,25 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ChatHomeAdapter extends RecyclerView.Adapter<ChatHomeAdapter.senderViewHolder> {
+public class ChatHomeAdapter extends RecyclerView.Adapter<ChatHomeAdapter.ViewHolder> {
     private List<ChatHomeModel> DataSet;
     Context context;
-//    private OnUserListener onUserListener;
+    DatabaseReference databaseReference;
+    FirebaseAuth firebaseAuth;
+    String lastMsg, lastMsgTime;
+
 
     public ChatHomeAdapter(Context context, List<ChatHomeModel> dataSet) {
         this.context = context;
@@ -28,24 +38,59 @@ public class ChatHomeAdapter extends RecyclerView.Adapter<ChatHomeAdapter.sender
 
     @NonNull
     @Override
-    public senderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View rootView = inflater.inflate(R.layout.chat_home_item, parent, false);
 
-        senderViewHolder senderViewHolder = new senderViewHolder(rootView);
+        ViewHolder ViewHolder = new ViewHolder(rootView);
 
-        return senderViewHolder;
+        return ViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull senderViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         ChatHomeModel chatHomeModel = DataSet.get(position);
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        firebaseAuth = FirebaseAuth.getInstance();
 
-        Picasso.get().load(chatHomeModel.getProfileImage()).into(holder.profileImage);
-        holder.userName.setText(chatHomeModel.getUserName());
-        holder.time.setText(chatHomeModel.getTime());
-        holder.lastMsg.setText(chatHomeModel.getLastMsg());
+        databaseReference.child("messages").orderByChild("time").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+
+                    if (dataSnapshot.child("receiver").getValue(String.class).equals(chatHomeModel.getUserId()) &
+                            dataSnapshot.child("sender").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid()) |
+                            dataSnapshot.child("sender").getValue(String.class).equals(chatHomeModel.getUserId()) &
+                                    dataSnapshot.child("receiver").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid())
+                    ) {
+                            lastMsg = dataSnapshot.child("messageText").getValue(String.class);
+                            lastMsgTime = dataSnapshot.child("time").getValue(String.class);
+                    }
+                }
+                Log.d("TAGggg msg ", "onBindViewHolder: "+lastMsg);
+                Log.d("TAGggg msgTime", "onBindViewHolder: "+lastMsgTime);
+
+                Picasso.get().load(chatHomeModel.getProfileImage()).into(holder.profileImage);
+                holder.userName.setText(chatHomeModel.getUserName());
+                holder.lastMsg.setText(lastMsg);
+
+                String hour =lastMsgTime.substring(8, 10);
+                String minute = lastMsgTime.substring(10, 12);
+
+                holder.time.setText(hour + ":" + minute);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        Log.d("TAGggg", "onBindViewHolder: "+lastMsg);
+        Log.d("TAGggg", "onBindViewHolder: "+lastMsgTime);
+
+
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,20 +109,15 @@ public class ChatHomeAdapter extends RecyclerView.Adapter<ChatHomeAdapter.sender
         return DataSet.size();
     }
 
-    public class senderViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         private final CircleImageView profileImage;
         private final TextView userName;
         private final TextView lastMsg;
         private final TextView time;
 
-//        OnUserListener onUserListener;
-
-        public senderViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
-//            this.onUserListener = onUserListener;
-//            itemView.setOnClickListener(this);
 
             profileImage = itemView.findViewById(R.id.profileImage);
             userName = itemView.findViewById(R.id.userName);
