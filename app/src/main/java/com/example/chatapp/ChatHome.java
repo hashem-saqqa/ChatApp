@@ -70,34 +70,23 @@ public class ChatHome extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String name = s.toString().toLowerCase();
+                String name = s.toString();
                 searchDataSet = new ArrayList<>();
 
-                databaseReference.child("users").orderByChild("name").startAt(name).endAt(name + "\uf8ff").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                            if (!dataSnapshot.getKey().equals(firebaseAuth.getCurrentUser().getUid())) {
-                                searchDataSet.add(new ChatHomeModel(
-                                        dataSnapshot.getKey(),
-                                        dataSnapshot.child("photo").getValue(String.class),
-                                        dataSnapshot.child("name").getValue(String.class)
-                                ));
-                            }
-
-                        }
-                        recyclerView = findViewById(R.id.chatHomeRV);
-                        linearLayoutManager = new LinearLayoutManager(getApplicationContext());
-                        recyclerView.setLayoutManager(linearLayoutManager);
-                        chatHomeAdapter = new ChatHomeAdapter(ChatHome.this, searchDataSet);
-                        recyclerView.setAdapter(chatHomeAdapter);
+                for (int i =0 ; i<dataSet.size(); i++) {
+                    if (dataSet.get(i).getUserName().startsWith(name.toLowerCase()) | dataSet.get(i).getUserName().startsWith(name.toUpperCase())){
+                        searchDataSet.add(new ChatHomeModel(
+                                dataSet.get(i).getUserId(),
+                                dataSet.get(i).getProfileImage(),
+                                dataSet.get(i).getUserName()
+                        ));
                     }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
+                }
+                recyclerView = findViewById(R.id.chatHomeRV);
+                linearLayoutManager = new LinearLayoutManager(getApplicationContext());
+                recyclerView.setLayoutManager(linearLayoutManager);
+                chatHomeAdapter = new ChatHomeAdapter(ChatHome.this, searchDataSet);
+                recyclerView.setAdapter(chatHomeAdapter);
             }
 
             @Override
