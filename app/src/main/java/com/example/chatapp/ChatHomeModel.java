@@ -8,6 +8,7 @@ public class ChatHomeModel {
     private String userName;
     private String time;
     private String lastMsg;
+    private String phone;
 
     public ChatHomeModel(String userId, String profileImage, String userName, String time, String lastMsg) {
         this.profileImage = profileImage;
@@ -16,10 +17,18 @@ public class ChatHomeModel {
         this.lastMsg = lastMsg;
         this.userId = userId;
     }
+
     public ChatHomeModel(String userId, String profileImage, String userName) {
         this.profileImage = profileImage;
         this.userName = userName;
         this.userId = userId;
+    }
+
+    public ChatHomeModel(String userId, String profileImage, String userName, String phone) {
+        this.profileImage = profileImage;
+        this.userName = userName;
+        this.userId = userId;
+        this.phone = phone;
     }
 
     public String getUserId() {
@@ -60,5 +69,13 @@ public class ChatHomeModel {
 
     public void setLastMsg(String lastMsg) {
         this.lastMsg = lastMsg;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

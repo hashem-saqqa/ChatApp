@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -72,7 +73,7 @@ public class ChatHome extends AppCompatActivity {
                 String name = s.toString().toLowerCase();
                 searchDataSet = new ArrayList<>();
 
-                databaseReference.child("users").orderByChild("name").startAt(name).endAt(name+"\uf8ff").addListenerForSingleValueEvent(new ValueEventListener() {
+                databaseReference.child("users").orderByChild("name").startAt(name).endAt(name + "\uf8ff").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
@@ -114,24 +115,49 @@ public class ChatHome extends AppCompatActivity {
 
         dataSet = new ArrayList<>();
 
+
         databaseReference.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     if (!dataSnapshot.getKey().equals(firebaseAuth.getCurrentUser().getUid())) {
-                        dataSet.add(new ChatHomeModel(
-                                dataSnapshot.getKey(),
-                                dataSnapshot.child("photo").getValue(String.class),
-                                dataSnapshot.child("name").getValue(String.class)
-                        ));
+                        databaseReference.child("messages").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for (DataSnapshot dataSnapshot1 : snapshot.getChildren()) {
+                                    if (dataSnapshot1.child("receiver").getValue(String.class).equals(dataSnapshot.getKey()) &
+                                            dataSnapshot1.child("sender").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid()) |
+                                            dataSnapshot1.child("sender").getValue(String.class).equals(dataSnapshot.getKey()) &
+                                                    dataSnapshot1.child("receiver").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid())
+                                    ) {
+                                        Log.d("TAGggg", "onDataChange: he is inside the big if");
+                                        Log.d("TAGggg", "onDataChange:" + dataSnapshot.getKey());
+                                        Log.d("TAGggg", "onDataChange:" + dataSnapshot.child("photo").getValue(String.class));
+                                        Log.d("TAGggg", "onDataChange:" + dataSnapshot.child("name").getValue(String.class));
+
+                                        dataSet.add(new ChatHomeModel(
+                                                dataSnapshot.getKey(),
+                                                dataSnapshot.child("photo").getValue(String.class),
+                                                dataSnapshot.child("name").getValue(String.class)
+                                        ));
+                                        break;
+                                    }
+                                }
+                                recyclerView = findViewById(R.id.chatHomeRV);
+                                linearLayoutManager = new LinearLayoutManager(getApplicationContext());
+                                recyclerView.setLayoutManager(linearLayoutManager);
+                                chatHomeAdapter = new ChatHomeAdapter(ChatHome.this, dataSet);
+                                recyclerView.setAdapter(chatHomeAdapter);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
                     }
 
                 }
-                recyclerView = findViewById(R.id.chatHomeRV);
-                linearLayoutManager = new LinearLayoutManager(getApplicationContext());
-                recyclerView.setLayoutManager(linearLayoutManager);
-                chatHomeAdapter = new ChatHomeAdapter(ChatHome.this, dataSet);
-                recyclerView.setAdapter(chatHomeAdapter);
             }
 
             @Override
@@ -144,11 +170,6 @@ public class ChatHome extends AppCompatActivity {
     public void newMessage(View view) {
         Intent intent = new Intent(getApplicationContext(), NewMessage.class);
         startActivity(intent);
-//        Intent intent = new Intent(getApplicationContext(), Login.class);
-//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        startActivity(intent);
-//        firebaseAuth.signOut();
-//        Toast.makeText(this, "Logout Successful", Toast.LENGTH_SHORT).show();
     }
 
     public void searchChatHome(View view) {
@@ -171,5 +192,10 @@ public class ChatHome extends AppCompatActivity {
 
         getTheRecent();
 
+    }
+
+    public void GoToProfile(View view) {
+        Intent intent = new Intent(getApplicationContext(), Profile.class);
+        startActivity(intent);
     }
 }

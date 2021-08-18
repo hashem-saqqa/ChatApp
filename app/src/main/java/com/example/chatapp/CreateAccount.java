@@ -2,6 +2,8 @@ package com.example.chatapp;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
@@ -15,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -27,11 +30,13 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
+
 public class CreateAccount extends AppCompatActivity {
     EditText passwordET, emailET, phoneET, nameET;
     String password, email, phone, name, photo;
     ImageView profileImage;
-    Uri profileAvatar;
+    Uri profileAvatar = null;
     FirebaseAuth firebaseAuth;
     DatabaseReference databaseReference;
     StorageReference storageReference;
@@ -79,9 +84,9 @@ public class CreateAccount extends AppCompatActivity {
         password = passwordET.getText().toString().trim();
         phone = phoneET.getText().toString().trim();
         name = nameET.getText().toString().trim().toLowerCase();
-        photo = profileAvatar.toString().trim();
 
-        if (!email.equals("") & !phone.equals("") & !name.equals("") & !password.equals("") & !photo.equals("")) {
+        if (!email.equals("") & !phone.equals("") & !name.equals("") & !password.equals("") & profileAvatar != null) {
+            photo = profileAvatar.toString().trim();
             firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
@@ -93,6 +98,7 @@ public class CreateAccount extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         uploadImageToFirebase();
+
                                     }
                                 });
                     } else {
