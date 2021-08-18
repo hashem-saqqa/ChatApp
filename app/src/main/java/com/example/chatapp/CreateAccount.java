@@ -154,26 +154,14 @@ public class CreateAccount extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("TAGggg out if", "onActivityResult: " + data);
 
         if (requestCode == 0 && resultCode == Activity.RESULT_OK) {
-            Log.d("TAGggg in if", "onActivityResult: " + data);
 
             if (data == null) {
-                Log.d("TAGggg error", "onActivityResult: " + data);
                 Toast.makeText(this, "error", Toast.LENGTH_SHORT).show();
             } else {
-                Log.d("TAGggg", "onActivityResult: " + data);
-                Log.d("TAGggg", "onActivityResult: " + data.getData());
-
-//            profileAvatar = data.getData().getPath().trim();
                 profileAvatar = data.getData();
-
-
-//            profileImage.setImageBitmap(BitmapFactory.decodeFile(profileAvatar));
                 profileImage.setImageURI(profileAvatar);
-
-//            Picasso.get().load(profileAvatar).into(profileImage);
 
             }
         }

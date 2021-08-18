@@ -7,20 +7,35 @@ public class MessageModel {
     private String time;
     private String messageText;
     private String receiverImage;
+    private String imageMessage;
 
-    public MessageModel(String sender, String receiver, String time, String messageText,String receiverImage) {
+    public MessageModel() {
+    }
+
+    public MessageModel(String sender, String receiver, String time, String messageText, String receiverImage, String imageMessage) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.time = time;
+        this.messageText = messageText;
+        this.receiverImage = receiverImage;
+        this.imageMessage = imageMessage;
+    }
+
+    public MessageModel(String sender, String receiver, String time, String messageText, String receiverImage) {
         this.sender = sender;
         this.receiver = receiver;
         this.time = time;
         this.messageText = messageText;
         this.receiverImage = receiverImage;
     }
+
     public MessageModel(String sender, String receiver, String time, String messageText) {
         this.sender = sender;
         this.receiver = receiver;
         this.time = time;
         this.messageText = messageText;
     }
+
 
     public String getMsgId() {
         return msgId;
@@ -68,5 +83,13 @@ public class MessageModel {
 
     public void setReceiverImage(String receiverImage) {
         this.receiverImage = receiverImage;
+    }
+
+    public String getImageMessage() {
+        return imageMessage;
+    }
+
+    public void setImageMessage(String imageMessage) {
+        this.imageMessage = imageMessage;
     }
 }

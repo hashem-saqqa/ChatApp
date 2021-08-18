@@ -50,7 +50,7 @@ public class ChatHome extends AppCompatActivity {
         getSupportActionBar().hide();
         ImageView chatIcon = findViewById(R.id.chatIcon);
         chatIcon.setColorFilter(Color.parseColor("#007EF4"));
-
+        chatIcon.setEnabled(false);
 
         searchBar = findViewById(R.id.searchBar);
         searchBar.setVisibility(View.INVISIBLE);
@@ -119,10 +119,6 @@ public class ChatHome extends AppCompatActivity {
                                             dataSnapshot1.child("sender").getValue(String.class).equals(dataSnapshot.getKey()) &
                                                     dataSnapshot1.child("receiver").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid())
                                     ) {
-                                        Log.d("TAGggg", "onDataChange: he is inside the big if");
-                                        Log.d("TAGggg", "onDataChange:" + dataSnapshot.getKey());
-                                        Log.d("TAGggg", "onDataChange:" + dataSnapshot.child("photo").getValue(String.class));
-                                        Log.d("TAGggg", "onDataChange:" + dataSnapshot.child("name").getValue(String.class));
 
                                         dataSet.add(new ChatHomeModel(
                                                 dataSnapshot.getKey(),

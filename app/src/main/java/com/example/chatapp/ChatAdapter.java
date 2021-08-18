@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -34,6 +35,8 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         View receiverView = LayoutInflater.from(parent.getContext()).inflate(R.layout.receiver_message_item, parent, false);
         View senderView = LayoutInflater.from(parent.getContext()).inflate(R.layout.sender_message_item, parent, false);
+        View receiverImageView = LayoutInflater.from(parent.getContext()).inflate(R.layout.image_receiver_item, parent, false);
+        View senderImageView = LayoutInflater.from(parent.getContext()).inflate(R.layout.image_sender_item, parent, false);
 
         if (viewType == 0) {
 
@@ -43,20 +46,36 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             return new ReceiverViewHolder(receiverView);
 
+        } else if (viewType == 2) {
+
+            return new SenderImageViewHolder(senderImageView);
+        } else if (viewType == 3) {
+
+            return new ReceiverImageViewHolder(receiverImageView);
+        }else {
+            return null;
         }
-        return null;
+
     }
 
     @Override
     public int getItemViewType(int position) {
         firebaseAuth = FirebaseAuth.getInstance();
-
-        if (dataSet.get(position).getSender().equals(firebaseAuth.getCurrentUser().getUid())) {
+        Log.d("posss", "getItemViewType: "+position);
+        if (dataSet.get(position).getSender().equals(firebaseAuth.getCurrentUser().getUid()) &
+                !dataSet.get(position).getMessageText().equals("null")) {
             return 0;
-        } else if (dataSet.get(position).getReceiver().equals(firebaseAuth.getCurrentUser().getUid())) {
+        } else if (dataSet.get(position).getReceiver().equals(firebaseAuth.getCurrentUser().getUid()) &
+                !dataSet.get(position).getMessageText().equals("null")) {
             return 1;
+        } else if (dataSet.get(position).getSender().equals(firebaseAuth.getCurrentUser().getUid()) &
+                !dataSet.get(position).getImageMessage().equals("null")) {
+            return 2;
+        } else if (dataSet.get(position).getReceiver().equals(firebaseAuth.getCurrentUser().getUid()) &
+                !dataSet.get(position).getImageMessage().equals("null")) {
+            return 3;
         }
-        return 2;
+        return 4;
     }
 
     @Override
@@ -85,6 +104,27 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             Picasso.get().load(messageModel.getReceiverImage()).into(receiverViewHolder.profileImage);
             receiverViewHolder.receiverMessage.setText(messageModel.getMessageText());
             receiverViewHolder.receiverMessageTime.setText(hour + ":" + minute);
+
+        }else if (holder.getItemViewType() == 2){
+
+            SenderImageViewHolder senderImageViewHolder = (SenderImageViewHolder) holder;
+
+            String hour = messageModel.getTime().substring(8, 10);
+            String minute = messageModel.getTime().substring(10, 12);
+
+            Picasso.get().load(messageModel.getImageMessage()).into(senderImageViewHolder.senderMessageImage);
+            senderImageViewHolder.senderMessageTime.setText(hour + ":" + minute);
+
+        }else if (holder.getItemViewType() == 3){
+
+            ReceiverImageViewHolder receiverImageViewHolder = (ReceiverImageViewHolder) holder;
+
+            String hour = messageModel.getTime().substring(8, 10);
+            String minute = messageModel.getTime().substring(10, 12);
+
+            Picasso.get().load(messageModel.getReceiverImage()).into(receiverImageViewHolder.profileImage);
+            Picasso.get().load(messageModel.getImageMessage()).into(receiverImageViewHolder.receiverMessageImage);
+            receiverImageViewHolder.receiverMessageTime.setText(hour + ":" + minute);
         }
 
 
@@ -117,9 +157,38 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         public SenderViewHolder(@NonNull View itemView) {
             super(itemView);
+
             senderMessage = itemView.findViewById(R.id.messageSenderTV);
             senderMessageTime = itemView.findViewById(R.id.timeSenderTV);
 
+        }
+    }
+
+    public class ReceiverImageViewHolder extends RecyclerView.ViewHolder {
+
+        private final CircleImageView profileImage;
+        private final ImageView receiverMessageImage;
+        private final TextView receiverMessageTime;
+
+        public ReceiverImageViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            profileImage = itemView.findViewById(R.id.profileImage);
+            receiverMessageImage = itemView.findViewById(R.id.messageReceiverIV);
+            receiverMessageTime = itemView.findViewById(R.id.timeReceiverTV);
+        }
+    }
+
+    public class SenderImageViewHolder extends RecyclerView.ViewHolder {
+
+        private final ImageView senderMessageImage;
+        private final TextView senderMessageTime;
+
+        public SenderImageViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            senderMessageImage = itemView.findViewById(R.id.messageSenderIV);
+            senderMessageTime = itemView.findViewById(R.id.timeSenderTV);
         }
     }
 }

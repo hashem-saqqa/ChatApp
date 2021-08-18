@@ -42,8 +42,9 @@ public class Profile extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         getSupportActionBar().hide();
-        ImageView chatIcon = findViewById(R.id.profileIcon);
-        chatIcon.setColorFilter(Color.parseColor("#007EF4"));
+        ImageView profileIcon = findViewById(R.id.profileIcon);
+        profileIcon.setColorFilter(Color.parseColor("#007EF4"));
+        profileIcon.setEnabled(false);
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
         firebaseAuth = FirebaseAuth.getInstance();

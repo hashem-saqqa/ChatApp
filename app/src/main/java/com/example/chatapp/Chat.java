@@ -1,12 +1,18 @@
 package com.example.chatapp;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.icu.text.SimpleDateFormat;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -14,21 +20,31 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
 public class Chat extends AppCompatActivity {
-    String userId, receiverImage;
+    String userId, receiverImage, photo;
     DatabaseReference databaseReference;
     TextView receiverName, receiverStatus;
     EditText messageET;
@@ -38,6 +54,8 @@ public class Chat extends AppCompatActivity {
     List<MessageModel> dataSet;
     RecyclerView recyclerView;
     LinearLayoutManager linearLayoutManager;
+    Uri messageImage;
+    StorageReference storageReference;
 
 
     @Override
@@ -115,18 +133,81 @@ public class Chat extends AppCompatActivity {
 
 
     public void sendImage(View view) {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, 0);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 0 & resultCode == Activity.RESULT_OK) {
+            if (data == null) {
+                Toast.makeText(this, "error", Toast.LENGTH_SHORT).show();
+            } else {
+
+//                Bitmap image = (Bitmap) data.getExtras().get("data");
+//                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+//                image.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+//                String path = MediaStore.Images.Media.insertImage(getApplicationContext().getContentResolver(), image, "Title", null);
+//                 messageImage = Uri.parse(path);
+
+                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 400, baos);
+                byte[] bytes = baos.toByteArray();
+
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
+                String currentTime = sdf.format(new Date());
+
+                storageReference = FirebaseStorage.getInstance().getReference(currentTime);
+                storageReference.putBytes(bytes).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                photo = uri.toString();
+                                createImageMessage();
+                                getTheMessages();
+                            }
+                        });
+                    }
+                });
+
+            }
+        }
+
     }
 
     private void createMessage() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
         String currentTime = sdf.format(new Date());
 
-        Log.d("TAGgg", "createMessage: " + currentTime);
 
         MessageModel message = new MessageModel(firebaseAuth.getCurrentUser().getUid()
                 , userId, currentTime, messageET.getText().toString());
 
         databaseReference.child("messages").child(currentTime).setValue(message);
+
+
+    }
+
+    private void createImageMessage() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
+        String currentTime = sdf.format(new Date());
+
+        MessageModel message = new MessageModel(firebaseAuth.getCurrentUser().getUid()
+                , userId, currentTime, messageET.getText().toString());
+
+        Log.d("TAGff", "createImageMessage: " + photo);
+
+        HashMap<String, Object> imageMessageData = new HashMap<>();
+        imageMessageData.put("sender", firebaseAuth.getCurrentUser().getUid());
+        imageMessageData.put("receiver", userId);
+        imageMessageData.put("time", currentTime);
+        imageMessageData.put("messageImage", photo);
+
+        databaseReference.child("messages").child(currentTime).setValue(imageMessageData);
 
 
     }
@@ -147,19 +228,30 @@ public class Chat extends AppCompatActivity {
                             dataSnapshot.child("sender").getValue(String.class).equals(userId) &
                                     dataSnapshot.child("receiver").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid())
                     ) {
-
-
+                        if (dataSnapshot.child("messageText").exists())
+                            dataSet.add(new MessageModel(
+                                    dataSnapshot.child("sender").getValue(String.class),
+                                    dataSnapshot.child("receiver").getValue(String.class),
+                                    dataSnapshot.child("time").getValue(String.class),
+                                    dataSnapshot.child("messageText").getValue(String.class),
+                                    receiverImage,
+                                    "null"));
+                    } else if (dataSnapshot.child("messageImage").exists()) {
                         dataSet.add(new MessageModel(
                                 dataSnapshot.child("sender").getValue(String.class),
                                 dataSnapshot.child("receiver").getValue(String.class),
                                 dataSnapshot.child("time").getValue(String.class),
-                                dataSnapshot.child("messageText").getValue(String.class),
-                                receiverImage));
-
-
-                    } else {
-                        Log.d("TAGgg2", "onDataChange: there is no messages between them");
-
+                                "null",
+                                receiverImage,
+                                dataSnapshot.child("messageImage").getValue(String.class)
+                        ));
+//                        MessageModel messageModel = new MessageModel();
+//                        messageModel.setSender(dataSnapshot.child("sender").getValue(String.class));
+//                        messageModel.setReceiver(dataSnapshot.child("receiver").getValue(String.class));
+//                        messageModel.setTime(dataSnapshot.child("time").getValue(String.class));
+//                        messageModel.setImageMessage(dataSnapshot.child("messageImage").getValue(String.class));
+//                        messageModel.setReceiverImage(receiverImage);
+//                        dataSet.add(messageModel);
                     }
                 }
 
