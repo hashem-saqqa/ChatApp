@@ -49,7 +49,6 @@ public class Chat extends AppCompatActivity {
     TextView receiverName;
     EditText messageET;
     ImageView voiceSendIcon;
-    ImageView cameraIcon;
     FirebaseAuth firebaseAuth;
     List<MessageModel> dataSet;
     RecyclerView recyclerView;
@@ -68,7 +67,6 @@ public class Chat extends AppCompatActivity {
         receiverName = findViewById(R.id.receiverName);
         messageET = findViewById(R.id.messageET);
         voiceSendIcon = findViewById(R.id.voiceBtn);
-        cameraIcon = findViewById(R.id.cameraBtn);
         firebaseAuth = FirebaseAuth.getInstance();
 
         fillTheUserData();
@@ -84,10 +82,8 @@ public class Chat extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (count > 0) {
                     voiceSendIcon.setImageResource(R.drawable.send_icon);
-                    cameraIcon.setVisibility(View.GONE);
                 } else if (count == 0) {
                     voiceSendIcon.setImageResource(R.drawable.btn_send2);
-                    cameraIcon.setVisibility(View.VISIBLE);
                 }
 
 
@@ -120,19 +116,14 @@ public class Chat extends AppCompatActivity {
         });
     }
 
-    public void sendVoiceOrMsg(View view) {
+    public void sendImageOrMsg(View view) {
         if (!messageET.getText().toString().equals("")) {
             createMessage();
             messageET.getText().clear();
         } else {
-
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(intent, 0);
         }
-    }
-
-
-    public void sendImage(View view) {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, 0);
     }
 
     @Override

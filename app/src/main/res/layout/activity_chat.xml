@@ -87,22 +87,13 @@
         android:textSize="15dp"
         />
     <ImageView
-        android:id="@+id/cameraBtn"
+        android:id="@+id/voiceBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/btn_send"
         android:layout_marginRight="10dp"
         android:layout_gravity="center"
-        android:onClick="sendImage"
-        />
-    <ImageView
-        android:id="@+id/voiceBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/btn_send2"
-        android:layout_marginRight="10dp"
-        android:layout_gravity="center"
-        android:onClick="sendVoiceOrMsg"
+        android:onClick="sendImageOrMsg"
         />
 </LinearLayout>
 
