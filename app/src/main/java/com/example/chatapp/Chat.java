@@ -83,7 +83,7 @@ public class Chat extends AppCompatActivity {
                 if (count > 0) {
                     voiceSendIcon.setImageResource(R.drawable.send_icon);
                 } else if (count == 0) {
-                    voiceSendIcon.setImageResource(R.drawable.btn_send2);
+                    voiceSendIcon.setImageResource(R.drawable.btn_send);
                 }
 
 
