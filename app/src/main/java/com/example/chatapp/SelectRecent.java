@@ -2,6 +2,8 @@ package com.example.chatapp;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -27,8 +29,9 @@ public class SelectRecent extends BottomSheetDialogFragment {
     FirebaseAuth firebaseAuth;
     List<ChatHomeModel> dataSet;
     RecyclerView recyclerView;
-    ChatHomeAdapter chatHomeAdapter;
+    NewMessageAdapter newMessageAdapter;
     LinearLayoutManager linearLayoutManager;
+    Intent data;
 
 
     @SuppressLint("RestrictedApi")
@@ -36,12 +39,24 @@ public class SelectRecent extends BottomSheetDialogFragment {
     public void setupDialog(@NonNull Dialog dialog, int style) {
         super.setupDialog(dialog, style);
         view = View.inflate(getContext(), R.layout.select_recent, null);
+        dialog.setContentView(view);
+
+        Log.d("SelectRecentStarted", "setupDialog: Started");
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
         firebaseAuth = FirebaseAuth.getInstance();
 
         fillTheRecents();
 
+    }
+
+
+    public SelectRecent() {
+    }
+
+
+    public SelectRecent(Intent data) {
+        this.data = data;
     }
 
     private void fillTheRecents() {
@@ -74,8 +89,8 @@ public class SelectRecent extends BottomSheetDialogFragment {
                                 recyclerView = view.findViewById(R.id.imageRecentRV);
                                 linearLayoutManager = new LinearLayoutManager(getContext());
                                 recyclerView.setLayoutManager(linearLayoutManager);
-                                chatHomeAdapter = new ChatHomeAdapter(getContext(), dataSet);
-                                recyclerView.setAdapter(chatHomeAdapter);
+                                newMessageAdapter = new NewMessageAdapter(getContext(), dataSet, data);
+                                recyclerView.setAdapter(newMessageAdapter);
                             }
 
                             @Override
@@ -96,7 +111,5 @@ public class SelectRecent extends BottomSheetDialogFragment {
 
     }
 
-    public SelectRecent() {
-    }
 
 }

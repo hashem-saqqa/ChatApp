@@ -29,7 +29,7 @@
             android:layout_marginLeft="50dp"
             android:text="user name"
             android:textColor="#fff"
-            android:textSize="25dp"
+            android:textSize="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"

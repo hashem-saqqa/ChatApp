@@ -64,18 +64,18 @@ public class ChatHomeAdapter extends RecyclerView.Adapter<ChatHomeAdapter.ViewHo
                             dataSnapshot.child("sender").getValue(String.class).equals(chatHomeModel.getUserId()) &
                                     dataSnapshot.child("receiver").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid())
                     ) {
-                            lastMsg = dataSnapshot.child("messageText").getValue(String.class);
-                            lastMsgTime = dataSnapshot.child("time").getValue(String.class);
+                        lastMsg = dataSnapshot.child("messageText").getValue(String.class);
+                        lastMsgTime = dataSnapshot.child("time").getValue(String.class);
                     }
                 }
-                Log.d("TAGggg msg ", "onBindViewHolder: "+lastMsg);
-                Log.d("TAGggg msgTime", "onBindViewHolder: "+lastMsgTime);
+                Log.d("TAGggg msg ", "onBindViewHolder: " + lastMsg);
+                Log.d("TAGggg msgTime", "onBindViewHolder: " + lastMsgTime);
 
                 Picasso.get().load(chatHomeModel.getProfileImage()).into(holder.profileImage);
                 holder.userName.setText(chatHomeModel.getUserName());
                 holder.lastMsg.setText(lastMsg);
 
-                String hour =lastMsgTime.substring(8, 10);
+                String hour = lastMsgTime.substring(8, 10);
                 String minute = lastMsgTime.substring(10, 12);
 
                 holder.time.setText(hour + ":" + minute);
@@ -87,16 +87,15 @@ public class ChatHomeAdapter extends RecyclerView.Adapter<ChatHomeAdapter.ViewHo
             }
         });
 
-        Log.d("TAGggg", "onBindViewHolder: "+lastMsg);
-        Log.d("TAGggg", "onBindViewHolder: "+lastMsgTime);
-
+        Log.d("TAGggg", "onBindViewHolder: " + lastMsg);
+        Log.d("TAGggg", "onBindViewHolder: " + lastMsgTime);
 
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context,Chat.class);
-                intent.putExtra("userId",chatHomeModel.getUserId());
+                Intent intent = new Intent(context, Chat.class);
+                intent.putExtra("userId", chatHomeModel.getUserId());
                 context.startActivity(intent);
             }
         });

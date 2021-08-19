@@ -61,7 +61,6 @@ public class ChatHome extends AppCompatActivity {
         newMessageIcon = findViewById(R.id.newMessageIcon);
         newMessageTV = findViewById(R.id.newMsgText);
         noRecents = findViewById(R.id.noRecents);
-        noRecents.setVisibility(View.GONE);
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
         firebaseAuth = FirebaseAuth.getInstance();
@@ -91,6 +90,7 @@ public class ChatHome extends AppCompatActivity {
                 recyclerView.setLayoutManager(linearLayoutManager);
                 chatHomeAdapter = new ChatHomeAdapter(ChatHome.this, searchDataSet);
                 recyclerView.setAdapter(chatHomeAdapter);
+
             }
 
             @Override
@@ -100,9 +100,6 @@ public class ChatHome extends AppCompatActivity {
         });
 
         getTheRecent();
-        if (dataSet.isEmpty()){
-            noRecents.setVisibility(View.VISIBLE);
-        }
     }
 
 
@@ -134,11 +131,14 @@ public class ChatHome extends AppCompatActivity {
                                         break;
                                     }
                                 }
+
                                 recyclerView = findViewById(R.id.chatHomeRV);
                                 linearLayoutManager = new LinearLayoutManager(getApplicationContext());
                                 recyclerView.setLayoutManager(linearLayoutManager);
                                 chatHomeAdapter = new ChatHomeAdapter(ChatHome.this, dataSet);
                                 recyclerView.setAdapter(chatHomeAdapter);
+                                noRecents.setVisibility(View.GONE);
+
                             }
 
                             @Override
@@ -156,6 +156,7 @@ public class ChatHome extends AppCompatActivity {
 
             }
         });
+
     }
 
     public void newMessage(View view) {
@@ -199,7 +200,7 @@ public class ChatHome extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 0 & resultCode == RESULT_OK & data != null){
-            SelectRecent selectRecent = new SelectRecent();
+            SelectRecent selectRecent = new SelectRecent(data);
             selectRecent.show(getSupportFragmentManager(),"SelectRecent");
         }
     }

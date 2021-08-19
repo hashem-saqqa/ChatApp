@@ -188,11 +188,6 @@ public class Chat extends AppCompatActivity {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
         String currentTime = sdf.format(new Date());
 
-        MessageModel message = new MessageModel(firebaseAuth.getCurrentUser().getUid()
-                , userId, currentTime, messageET.getText().toString());
-
-        Log.d("TAGff", "createImageMessage: " + photo);
-
         HashMap<String, Object> imageMessageData = new HashMap<>();
         imageMessageData.put("sender", firebaseAuth.getCurrentUser().getUid());
         imageMessageData.put("receiver", userId);
