@@ -46,7 +46,7 @@ import java.util.Locale;
 public class Chat extends AppCompatActivity {
     String userId, receiverImage, photo;
     DatabaseReference databaseReference;
-    TextView receiverName, receiverStatus;
+    TextView receiverName;
     EditText messageET;
     ImageView voiceSendIcon;
     ImageView cameraIcon;
@@ -54,7 +54,6 @@ public class Chat extends AppCompatActivity {
     List<MessageModel> dataSet;
     RecyclerView recyclerView;
     LinearLayoutManager linearLayoutManager;
-    Uri messageImage;
     StorageReference storageReference;
 
 
@@ -67,7 +66,6 @@ public class Chat extends AppCompatActivity {
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
         receiverName = findViewById(R.id.receiverName);
-        receiverStatus = findViewById(R.id.receiverStatus);
         messageET = findViewById(R.id.messageET);
         voiceSendIcon = findViewById(R.id.voiceBtn);
         cameraIcon = findViewById(R.id.cameraBtn);
@@ -262,5 +260,9 @@ public class Chat extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void BackButton(View view) {
+        finish();
     }
 }

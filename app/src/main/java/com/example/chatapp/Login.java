@@ -3,7 +3,9 @@ package com.example.chatapp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -24,11 +26,16 @@ public class Login extends AppCompatActivity {
     String password, email;
     FirebaseAuth firebaseAuth;
     CheckBox remeberMe;
+    SharedPreferences.Editor editor;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        sharedPreferences = getSharedPreferences("rememberMe", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
 
         passwordET = findViewById(R.id.passwordET);
         emailET = findViewById(R.id.emailET);
@@ -37,17 +44,14 @@ public class Login extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
     }
 
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-//            Intent intent = new Intent(getApplicationContext(), ChatHome.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-//            startActivityForResult(intent, 0);
-//        }
-//    }
-
     public void GoToHome(View view) {
+        if (remeberMe.isChecked()) {
+            editor.putBoolean("rememberMe", true);
+            editor.apply();
+        } else {
+            editor.putBoolean("rememberMe", false);
+            editor.apply();
+        }
         email = emailET.getText().toString();
         password = passwordET.getText().toString();
         if (!email.equals("") & !password.equals("")) {
@@ -95,10 +99,12 @@ public class Login extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            Intent intent = new Intent(getApplicationContext(), ChatHome.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+        if (sharedPreferences.getBoolean("rememberMe", true)) {
+            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                Intent intent = new Intent(getApplicationContext(), ChatHome.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }
     }
 }

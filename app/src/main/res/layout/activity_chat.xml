@@ -19,22 +19,10 @@
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0" />
-
-    <ImageView
-        android:id="@+id/callIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:layout_marginRight="20dp"
-        android:src="@drawable/phone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0"
-        app:tint="#007EF4" />
+        android:onClick="BackButton"
+        />
+
 
     <TextView
         android:id="@+id/receiverName"
@@ -50,26 +38,14 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0" />
 
-    <TextView
-        android:id="@+id/receiverStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
-        android:text="the recever status"
-        android:textColor="#fff"
-        android:textSize="15dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/receiverName"
-        app:layout_constraintVertical_bias="0" />
+
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="0dp"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintBottom_toTopOf="@id/messageLL"
-    app:layout_constraintTop_toBottomOf="@id/receiverStatus"
+    app:layout_constraintTop_toBottomOf="@id/receiverName"
     app:layout_constraintVertical_bias="0"
     android:layout_marginTop="20dp"
     android:layout_marginHorizontal="20dp"

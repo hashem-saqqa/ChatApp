@@ -1,6 +1,7 @@
 package com.example.chatapp;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -38,7 +40,7 @@ public class ChatHome extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     EditText searchET;
     ImageView searchIcon, newMessageIcon;
-    TextView newMessageTV;
+    TextView newMessageTV,noRecents;
     ConstraintLayout searchBar;
 
 
@@ -58,6 +60,8 @@ public class ChatHome extends AppCompatActivity {
         searchIcon = findViewById(R.id.searchIcon);
         newMessageIcon = findViewById(R.id.newMessageIcon);
         newMessageTV = findViewById(R.id.newMsgText);
+        noRecents = findViewById(R.id.noRecents);
+        noRecents.setVisibility(View.GONE);
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
         firebaseAuth = FirebaseAuth.getInstance();
@@ -96,7 +100,9 @@ public class ChatHome extends AppCompatActivity {
         });
 
         getTheRecent();
-
+        if (dataSet.isEmpty()){
+            noRecents.setVisibility(View.VISIBLE);
+        }
     }
 
 
@@ -182,5 +188,19 @@ public class ChatHome extends AppCompatActivity {
     public void GoToProfile(View view) {
         Intent intent = new Intent(getApplicationContext(), Profile.class);
         startActivity(intent);
+    }
+
+    public void GoToCamera(View view) {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent,0);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 0 & resultCode == RESULT_OK & data != null){
+            SelectRecent selectRecent = new SelectRecent();
+            selectRecent.show(getSupportFragmentManager(),"SelectRecent");
+        }
     }
 }
