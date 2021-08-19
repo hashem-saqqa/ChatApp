@@ -50,7 +50,6 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             return new SenderImageViewHolder(senderImageView);
         } else if (viewType == 3) {
-
             return new ReceiverImageViewHolder(receiverImageView);
         }else {
             return null;

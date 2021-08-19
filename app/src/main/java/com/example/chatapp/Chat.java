@@ -140,20 +140,14 @@ public class Chat extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 0 & resultCode == Activity.RESULT_OK) {
+        if (requestCode == 0 & resultCode == RESULT_OK) {
             if (data == null) {
                 Toast.makeText(this, "error", Toast.LENGTH_SHORT).show();
             } else {
 
-//                Bitmap image = (Bitmap) data.getExtras().get("data");
-//                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-//                image.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-//                String path = MediaStore.Images.Media.insertImage(getApplicationContext().getContentResolver(), image, "Title", null);
-//                 messageImage = Uri.parse(path);
-
                 Bitmap bitmap = (Bitmap) data.getExtras().get("data");
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 400, baos);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                 byte[] bytes = baos.toByteArray();
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
@@ -220,15 +214,17 @@ public class Chat extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 dataSet.clear();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 
                     if (dataSnapshot.child("receiver").getValue(String.class).equals(userId) &
                             dataSnapshot.child("sender").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid()) |
                             dataSnapshot.child("sender").getValue(String.class).equals(userId) &
                                     dataSnapshot.child("receiver").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid())
                     ) {
-                        if (dataSnapshot.child("messageText").exists())
+                        if (dataSnapshot.child("messageText").exists()) {
+                            Log.d("theReceiverText", "onDataChange: " + dataSnapshot.child("receiver").getValue(String.class));
+
                             dataSet.add(new MessageModel(
                                     dataSnapshot.child("sender").getValue(String.class),
                                     dataSnapshot.child("receiver").getValue(String.class),
@@ -236,22 +232,20 @@ public class Chat extends AppCompatActivity {
                                     dataSnapshot.child("messageText").getValue(String.class),
                                     receiverImage,
                                     "null"));
-                    } else if (dataSnapshot.child("messageImage").exists()) {
-                        dataSet.add(new MessageModel(
-                                dataSnapshot.child("sender").getValue(String.class),
-                                dataSnapshot.child("receiver").getValue(String.class),
-                                dataSnapshot.child("time").getValue(String.class),
-                                "null",
-                                receiverImage,
-                                dataSnapshot.child("messageImage").getValue(String.class)
-                        ));
-//                        MessageModel messageModel = new MessageModel();
-//                        messageModel.setSender(dataSnapshot.child("sender").getValue(String.class));
-//                        messageModel.setReceiver(dataSnapshot.child("receiver").getValue(String.class));
-//                        messageModel.setTime(dataSnapshot.child("time").getValue(String.class));
-//                        messageModel.setImageMessage(dataSnapshot.child("messageImage").getValue(String.class));
-//                        messageModel.setReceiverImage(receiverImage);
-//                        dataSet.add(messageModel);
+                        } else if (dataSnapshot.child("messageImage").exists()) {
+
+                            Log.d("theReceiverImage", "onDataChange: " + dataSnapshot.child("receiver").getValue(String.class));
+
+                            dataSet.add(new MessageModel(
+                                    dataSnapshot.child("sender").getValue(String.class),
+                                    dataSnapshot.child("receiver").getValue(String.class),
+                                    dataSnapshot.child("time").getValue(String.class),
+                                    "null",
+                                    receiverImage,
+                                    dataSnapshot.child("messageImage").getValue(String.class)
+                            ));
+                        }
+
                     }
                 }
 

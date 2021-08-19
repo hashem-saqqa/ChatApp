@@ -13,8 +13,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/messageSenderCL"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="200dp"
+            android:layout_height="300dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/sender_shape"
             android:backgroundTint="#007EF4"
@@ -28,7 +28,7 @@
 
             <ImageView
                 android:id="@+id/messageSenderIV"
-                android:layout_width="200dp"
+                android:layout_width="match_parent"
                 android:layout_height="400dp"
                 android:layout_marginRight="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
