@@ -24,6 +24,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
@@ -74,7 +76,18 @@ public class NewMessageAdapter extends RecyclerView.Adapter<NewMessageAdapter.Vi
 
         ChatHomeModel chatHomeModel = DataSet.get(position);
 
-        Picasso.get().load(chatHomeModel.getProfileImage()).into(holder.profileImage);
+        Picasso.get().load(chatHomeModel.getProfileImage()).networkPolicy(NetworkPolicy.OFFLINE).into(holder.profileImage, new Callback() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Picasso.get().load(chatHomeModel.getProfileImage()).into(holder.profileImage);
+
+            }
+        });
         holder.userName.setText(chatHomeModel.getUserName());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {

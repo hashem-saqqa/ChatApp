@@ -23,6 +23,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -65,7 +67,18 @@ public class Profile extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                            Picasso.get().load(dataSnapshot.child("photo").getValue(String.class)).into(profileImage);
+                            Picasso.get().load(dataSnapshot.child("photo").getValue(String.class)).networkPolicy(NetworkPolicy.OFFLINE).into(profileImage, new Callback() {
+                                @Override
+                                public void onSuccess() {
+
+                                }
+
+                                @Override
+                                public void onError(Exception e) {
+                                    Picasso.get().load(dataSnapshot.child("photo").getValue(String.class)).into(profileImage);
+
+                                }
+                            });
                             userNameTV.setText(dataSnapshot.child("name").getValue(String.class));
                         }
                     }
@@ -119,17 +132,18 @@ public class Profile extends AppCompatActivity {
         firebaseAuth.signOut();
         Toast.makeText(this, "Logout Successful", Toast.LENGTH_SHORT).show();
     }
+
     public void GoToCamera(View view) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent,0);
+        startActivityForResult(intent, 0);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 0 & resultCode == RESULT_OK & data != null){
+        if (requestCode == 0 & resultCode == RESULT_OK & data != null) {
             SelectRecent selectRecent = new SelectRecent(data);
-            selectRecent.show(getSupportFragmentManager(),"SelectRecent");
+            selectRecent.show(getSupportFragmentManager(), "SelectRecent");
         }
     }
 }

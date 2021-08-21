@@ -17,6 +17,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -71,7 +73,18 @@ public class ChatHomeAdapter extends RecyclerView.Adapter<ChatHomeAdapter.ViewHo
                 Log.d("TAGggg msg ", "onBindViewHolder: " + lastMsg);
                 Log.d("TAGggg msgTime", "onBindViewHolder: " + lastMsgTime);
 
-                Picasso.get().load(chatHomeModel.getProfileImage()).into(holder.profileImage);
+                Picasso.get().load(chatHomeModel.getProfileImage()).networkPolicy(NetworkPolicy.OFFLINE).into(holder.profileImage, new Callback() {
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Picasso.get().load(chatHomeModel.getProfileImage()).into(holder.profileImage);
+
+                    }
+                });
                 holder.userName.setText(chatHomeModel.getUserName());
                 holder.lastMsg.setText(lastMsg);
 

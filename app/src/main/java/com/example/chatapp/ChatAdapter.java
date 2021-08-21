@@ -13,6 +13,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -100,7 +102,17 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             String hour = messageModel.getTime().substring(8, 10);
             String minute = messageModel.getTime().substring(10, 12);
 
-            Picasso.get().load(messageModel.getReceiverImage()).into(receiverViewHolder.profileImage);
+            Picasso.get().load(messageModel.getReceiverImage()).networkPolicy(NetworkPolicy.OFFLINE).into(receiverViewHolder.profileImage, new Callback() {
+                @Override
+                public void onSuccess() {
+
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    Picasso.get().load(messageModel.getReceiverImage()).into(receiverViewHolder.profileImage);
+                }
+            });
             receiverViewHolder.receiverMessage.setText(messageModel.getMessageText());
             receiverViewHolder.receiverMessageTime.setText(hour + ":" + minute);
 
@@ -111,7 +123,18 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             String hour = messageModel.getTime().substring(8, 10);
             String minute = messageModel.getTime().substring(10, 12);
 
-            Picasso.get().load(messageModel.getImageMessage()).into(senderImageViewHolder.senderMessageImage);
+            Picasso.get().load(messageModel.getImageMessage()).networkPolicy(NetworkPolicy.OFFLINE).into(senderImageViewHolder.senderMessageImage, new Callback() {
+                @Override
+                public void onSuccess() {
+
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    Picasso.get().load(messageModel.getImageMessage()).into(senderImageViewHolder.senderMessageImage);
+
+                }
+            });
             senderImageViewHolder.senderMessageTime.setText(hour + ":" + minute);
 
         }else if (holder.getItemViewType() == 3){
@@ -121,8 +144,40 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             String hour = messageModel.getTime().substring(8, 10);
             String minute = messageModel.getTime().substring(10, 12);
 
-            Picasso.get().load(messageModel.getReceiverImage()).into(receiverImageViewHolder.profileImage);
-            Picasso.get().load(messageModel.getImageMessage()).into(receiverImageViewHolder.receiverMessageImage);
+            Picasso.get().load(messageModel.getReceiverImage()).networkPolicy(NetworkPolicy.OFFLINE).into(receiverImageViewHolder.profileImage, new Callback() {
+                @Override
+                public void onSuccess() {
+
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    Picasso.get().load(messageModel.getReceiverImage()).into(receiverImageViewHolder.profileImage);
+
+                }
+            });
+            Picasso.get().load(messageModel.getImageMessage()).networkPolicy(NetworkPolicy.OFFLINE).into(receiverImageViewHolder.receiverMessageImage, new Callback() {
+                @Override
+                public void onSuccess() {
+
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    Picasso.get().load(messageModel.getImageMessage()).into(receiverImageViewHolder.receiverMessageImage);
+                }
+            });
+            Picasso.get().load(messageModel.getImageMessage()).networkPolicy(NetworkPolicy.OFFLINE).into(receiverImageViewHolder.receiverMessageImage, new Callback() {
+                @Override
+                public void onSuccess() {
+
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    Picasso.get().load(messageModel.getImageMessage()).into(receiverImageViewHolder.receiverMessageImage);
+                }
+            });
             receiverImageViewHolder.receiverMessageTime.setText(hour + ":" + minute);
         }
 
