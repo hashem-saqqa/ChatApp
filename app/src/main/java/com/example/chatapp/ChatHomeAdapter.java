@@ -56,7 +56,7 @@ public class ChatHomeAdapter extends RecyclerView.Adapter<ChatHomeAdapter.ViewHo
         databaseReference = FirebaseDatabase.getInstance().getReference();
         firebaseAuth = FirebaseAuth.getInstance();
 
-        databaseReference.child("messages").orderByChild("time").addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReference.child("messages").orderByChild("time").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
@@ -70,8 +70,6 @@ public class ChatHomeAdapter extends RecyclerView.Adapter<ChatHomeAdapter.ViewHo
                         lastMsgTime = dataSnapshot.child("time").getValue(String.class);
                     }
                 }
-                Log.d("TAGggg msg ", "onBindViewHolder: " + lastMsg);
-                Log.d("TAGggg msgTime", "onBindViewHolder: " + lastMsgTime);
 
                 Picasso.get().load(chatHomeModel.getProfileImage()).networkPolicy(NetworkPolicy.OFFLINE).into(holder.profileImage, new Callback() {
                     @Override

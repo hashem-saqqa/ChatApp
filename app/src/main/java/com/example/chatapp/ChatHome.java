@@ -40,7 +40,7 @@ public class ChatHome extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     EditText searchET;
     ImageView searchIcon, newMessageIcon;
-    TextView newMessageTV,noRecents;
+    TextView newMessageTV, noRecents;
     ConstraintLayout searchBar;
 
 
@@ -63,6 +63,7 @@ public class ChatHome extends AppCompatActivity {
         noRecents = findViewById(R.id.noRecents);
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
+
         firebaseAuth = FirebaseAuth.getInstance();
 
         searchET.addTextChangedListener(new TextWatcher() {
@@ -76,8 +77,8 @@ public class ChatHome extends AppCompatActivity {
                 String name = s.toString();
                 searchDataSet = new ArrayList<>();
 
-                for (int i =0 ; i<dataSet.size(); i++) {
-                    if (dataSet.get(i).getUserName().startsWith(name.toLowerCase()) | dataSet.get(i).getUserName().startsWith(name.toUpperCase())){
+                for (int i = 0; i < dataSet.size(); i++) {
+                    if (dataSet.get(i).getUserName().startsWith(name.toLowerCase()) | dataSet.get(i).getUserName().startsWith(name.toUpperCase())) {
                         searchDataSet.add(new ChatHomeModel(
                                 dataSet.get(i).getUserId(),
                                 dataSet.get(i).getProfileImage(),
@@ -107,13 +108,14 @@ public class ChatHome extends AppCompatActivity {
 
         dataSet = new ArrayList<>();
 
-
-        databaseReference.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReference.child("users").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                dataSet.clear();
+
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     if (!dataSnapshot.getKey().equals(firebaseAuth.getCurrentUser().getUid())) {
-                        databaseReference.child("messages").addListenerForSingleValueEvent(new ValueEventListener() {
+                        databaseReference.child("messages").addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 for (DataSnapshot dataSnapshot1 : snapshot.getChildren()) {
@@ -128,6 +130,7 @@ public class ChatHome extends AppCompatActivity {
                                                 dataSnapshot.child("photo").getValue(String.class),
                                                 dataSnapshot.child("name").getValue(String.class)
                                         ));
+                                        noRecents.setVisibility(View.GONE);
                                         break;
                                     }
                                 }
@@ -137,7 +140,6 @@ public class ChatHome extends AppCompatActivity {
                                 recyclerView.setLayoutManager(linearLayoutManager);
                                 chatHomeAdapter = new ChatHomeAdapter(ChatHome.this, dataSet);
                                 recyclerView.setAdapter(chatHomeAdapter);
-                                noRecents.setVisibility(View.GONE);
 
                             }
 
@@ -193,15 +195,15 @@ public class ChatHome extends AppCompatActivity {
 
     public void GoToCamera(View view) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent,0);
+        startActivityForResult(intent, 0);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 0 & resultCode == RESULT_OK & data != null){
+        if (requestCode == 0 & resultCode == RESULT_OK & data != null) {
             SelectRecent selectRecent = new SelectRecent(data);
-            selectRecent.show(getSupportFragmentManager(),"SelectRecent");
+            selectRecent.show(getSupportFragmentManager(), "SelectRecent");
         }
     }
 }

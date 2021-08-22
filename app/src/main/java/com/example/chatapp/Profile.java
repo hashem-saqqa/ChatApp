@@ -93,9 +93,11 @@ public class Profile extends AppCompatActivity {
     private void fillTheUser() {
         dataSet = new ArrayList<>();
 
-        databaseReference.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReference.child("users").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                dataSet.clear();
+
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     if (!dataSnapshot.getKey().equals(firebaseAuth.getCurrentUser().getUid())) {
                         dataSet.add(new ChatHomeModel(

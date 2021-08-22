@@ -151,7 +151,6 @@ public class Chat extends AppCompatActivity {
                             public void onSuccess(Uri uri) {
                                 photo = uri.toString();
                                 createImageMessage();
-                                getTheMessages();
                             }
                         });
                     }
