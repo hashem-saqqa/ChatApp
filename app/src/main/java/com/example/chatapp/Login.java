@@ -47,10 +47,10 @@ public class Login extends AppCompatActivity {
     public void GoToHome(View view) {
         if (remeberMe.isChecked()) {
             editor.putBoolean("rememberMe", true);
-            editor.apply();
+            editor.commit();
         } else {
             editor.putBoolean("rememberMe", false);
-            editor.apply();
+            editor.commit();
         }
         email = emailET.getText().toString();
         password = passwordET.getText().toString();
@@ -61,6 +61,7 @@ public class Login extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         Intent intent = new Intent(getApplicationContext(), ChatHome.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.putExtra("loginChecked",false);
                         startActivity(intent);
                     } else {
                         Toast.makeText(Login.this, "check the email or the password", Toast.LENGTH_SHORT).show();
@@ -96,15 +97,15 @@ public class Login extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (sharedPreferences.getBoolean("rememberMe", true)) {
-            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                Intent intent = new Intent(getApplicationContext(), ChatHome.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-            }
-        }
-    }
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        if (sharedPreferences.getBoolean("rememberMe", true)) {
+//            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+//                Intent intent = new Intent(getApplicationContext(), ChatHome.class);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                startActivity(intent);
+//            }
+//        }
+//    }
 }

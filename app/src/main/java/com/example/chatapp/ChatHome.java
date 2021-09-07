@@ -1,3 +1,4 @@
+
 package com.example.chatapp;
 
 import androidx.annotation.NonNull;
@@ -8,7 +9,9 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -19,13 +22,17 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,10 +56,21 @@ public class ChatHome extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_home);
 
+        SharedPreferences sharedPreferences = getSharedPreferences("rememberMe", Context.MODE_PRIVATE);
+
+        if (FirebaseAuth.getInstance().getCurrentUser() == null | (!sharedPreferences.getBoolean("rememberMe", true)
+                & getIntent().getBooleanExtra("loginChecked", true))) {
+            Intent intent = new Intent(getApplicationContext(), Login.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
+
         getSupportActionBar().hide();
         ImageView chatIcon = findViewById(R.id.chatIcon);
         chatIcon.setColorFilter(Color.parseColor("#007EF4"));
         chatIcon.setEnabled(false);
+
+        handleNotificationData();
 
         searchBar = findViewById(R.id.searchBar);
         searchBar.setVisibility(View.INVISIBLE);
@@ -99,8 +117,23 @@ public class ChatHome extends AppCompatActivity {
 
             }
         });
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
 
-        getTheRecent();
+            getTheRecent();
+        }
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                if (!task.isSuccessful()) {
+                    Log.d("TAGgg", "Fetching FCM registration token failed", task.getException());
+                    return;
+                }
+                String token = task.getResult();
+
+                Log.d("tokennn", token);
+                Toast.makeText(ChatHome.this, token, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 
@@ -115,16 +148,16 @@ public class ChatHome extends AppCompatActivity {
 
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     if (!dataSnapshot.getKey().equals(firebaseAuth.getCurrentUser().getUid())) {
-                        databaseReference.child("messages").addValueEventListener(new ValueEventListener() {
+                        databaseReference.child("messages").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
                                 for (DataSnapshot dataSnapshot1 : snapshot.getChildren()) {
                                     if (dataSnapshot1.child("receiver").getValue(String.class).equals(dataSnapshot.getKey()) &
                                             dataSnapshot1.child("sender").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid()) |
                                             dataSnapshot1.child("sender").getValue(String.class).equals(dataSnapshot.getKey()) &
                                                     dataSnapshot1.child("receiver").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid())
                                     ) {
-
                                         dataSet.add(new ChatHomeModel(
                                                 dataSnapshot.getKey(),
                                                 dataSnapshot.child("photo").getValue(String.class),
@@ -134,13 +167,11 @@ public class ChatHome extends AppCompatActivity {
                                         break;
                                     }
                                 }
-
                                 recyclerView = findViewById(R.id.chatHomeRV);
                                 linearLayoutManager = new LinearLayoutManager(getApplicationContext());
                                 recyclerView.setLayoutManager(linearLayoutManager);
                                 chatHomeAdapter = new ChatHomeAdapter(ChatHome.this, dataSet);
                                 recyclerView.setAdapter(chatHomeAdapter);
-
                             }
 
                             @Override
@@ -204,6 +235,31 @@ public class ChatHome extends AppCompatActivity {
         if (requestCode == 0 & resultCode == RESULT_OK & data != null) {
             SelectRecent selectRecent = new SelectRecent(data);
             selectRecent.show(getSupportFragmentManager(), "SelectRecent");
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.d("testt", "onNewIntent: intent is worked");
+
+    }
+
+    private void handleNotificationData() {
+
+        Bundle bundle = getIntent().getExtras();
+
+        Log.e("TAGgg", "handleNotificationData: it is inside the method: " + bundle);
+
+        if (bundle != null) {
+            Log.d("TAGgg", "handleNotificationData: it is inside the first if " + bundle);
+
+            if (bundle.containsKey("data1")) {
+                Log.d("data1", "Data:" + bundle.getString("data1"));
+            }
+            if (bundle.containsKey("data2")) {
+                Log.d("data2", "Data:" + bundle.getString("data2"));
+            }
         }
     }
 }

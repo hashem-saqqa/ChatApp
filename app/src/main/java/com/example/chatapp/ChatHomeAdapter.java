@@ -98,10 +98,6 @@ public class ChatHomeAdapter extends RecyclerView.Adapter<ChatHomeAdapter.ViewHo
             }
         });
 
-        Log.d("TAGggg", "onBindViewHolder: " + lastMsg);
-        Log.d("TAGggg", "onBindViewHolder: " + lastMsgTime);
-
-
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -6,12 +6,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -22,15 +24,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.chatapp.Notification.Client;
+import com.example.chatapp.Notification.Data;
+import com.example.chatapp.Notification.MyResponse;
+import com.example.chatapp.Notification.Sender;
+import com.example.chatapp.Notification.Token;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -43,6 +53,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class Chat extends AppCompatActivity {
     String userId, receiverImage, photo;
     DatabaseReference databaseReference;
@@ -54,6 +68,8 @@ public class Chat extends AppCompatActivity {
     RecyclerView recyclerView;
     LinearLayoutManager linearLayoutManager;
     StorageReference storageReference;
+    ApiService apiService;
+    boolean notify = false;
 
 
     @Override
@@ -96,6 +112,32 @@ public class Chat extends AppCompatActivity {
             }
         });
         getTheMessages();
+
+        updateToken();
+        apiService = Client.getClient("https://fcm.googleapis.com/").create(ApiService.class);
+
+    }
+
+    private void updateToken() {
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                if (!task.isSuccessful()) {
+                    Log.d("TAGgg", "Fetching FCM registration token failed", task.getException());
+                    return;
+                }
+                String token = task.getResult();
+
+                Log.d("tokennn", token);
+                Toast.makeText(Chat.this, token, Toast.LENGTH_SHORT).show();
+
+                FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("tokens");
+                Token token1 = new Token(token);
+                databaseReference.child(firebaseUser.getUid()).setValue(token1);
+            }
+        });
     }
 
 
@@ -165,11 +207,74 @@ public class Chat extends AppCompatActivity {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
         String currentTime = sdf.format(new Date());
 
+        notify = true;
 
         MessageModel message = new MessageModel(firebaseAuth.getCurrentUser().getUid()
                 , userId, currentTime, messageET.getText().toString());
 
         databaseReference.child("messages").child(currentTime).setValue(message);
+
+        String msg = message.getMessageText();
+        databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                User user = snapshot.getValue(User.class);
+                if (notify) {
+
+                    sendNotification(userId, snapshot.child("name").getValue(String.class), msg);
+                }
+                notify = false;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
+    private void sendNotification(String userId, String name, String msg) {
+        Log.w("test", "sendNotification: he is un the method " + userId);
+        Log.w("test", "sendNotification: he is un the method " + name);
+        Log.w("test", "sendNotification: he is un the method " + msg);
+        DatabaseReference tokens = databaseReference.child("tokens");
+        tokens.orderByKey().equalTo(userId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Token token = dataSnapshot.getValue(Token.class);
+                    Data data = new Data(firebaseAuth.getCurrentUser().getUid(), name + " : " + msg
+                            , "New Message", userId, R.mipmap.chat_app_logo);
+                    Sender sender = new Sender(data, token.getToken());
+                    Log.e("test", "onDataChange: " + token.getToken());
+
+                    apiService.sendNotification(sender).enqueue(new Callback<MyResponse>() {
+                        @Override
+                        public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
+                            Log.w("test", "onResponse: Success1");
+                            if (response.code() == 200) {
+                                Log.w("test", "onResponse: Failure1");
+                                if (response.body().success != 1) {
+                                    Log.w("test", "onResponse: Failure2");
+                                    Toast.makeText(Chat.this, "Failed!!!", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<MyResponse> call, Throwable t) {
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
 
     }
@@ -206,7 +311,6 @@ public class Chat extends AppCompatActivity {
                                     dataSnapshot.child("receiver").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid())
                     ) {
                         if (dataSnapshot.child("messageText").exists()) {
-                            Log.d("theReceiverText", "onDataChange: " + dataSnapshot.child("receiver").getValue(String.class));
 
                             dataSet.add(new MessageModel(
                                     dataSnapshot.child("sender").getValue(String.class),
@@ -217,7 +321,6 @@ public class Chat extends AppCompatActivity {
                                     "null"));
                         } else if (dataSnapshot.child("messageImage").exists()) {
 
-                            Log.d("theReceiverImage", "onDataChange: " + dataSnapshot.child("receiver").getValue(String.class));
 
                             dataSet.add(new MessageModel(
                                     dataSnapshot.child("sender").getValue(String.class),

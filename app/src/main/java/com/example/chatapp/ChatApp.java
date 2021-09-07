@@ -16,7 +16,7 @@ public class ChatApp extends Application {
         builder.downloader(new OkHttp3Downloader(this,Integer.MAX_VALUE));
         Picasso built = builder.build();
         built.setIndicatorsEnabled(false);
-        built.setLoggingEnabled(true);
+        built.setLoggingEnabled(false);
         Picasso.setSingletonInstance(built);
 
 
