@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,7 +98,6 @@ public class NewMessageAdapter extends RecyclerView.Adapter<NewMessageAdapter.Vi
                     context.startActivity(intent);
                 }else {
                     userId = chatHomeModel.getUserId();
-                    Log.d("TAGff1", "onClick: ");
                     Bitmap bitmap = (Bitmap) data.getExtras().get("data");
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -132,7 +130,6 @@ public class NewMessageAdapter extends RecyclerView.Adapter<NewMessageAdapter.Vi
 
     }
     private void createImageMessage() {
-        Log.d("TAGff2", "onClick: ");
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
         String currentTime = sdf.format(new Date());
@@ -147,7 +144,6 @@ public class NewMessageAdapter extends RecyclerView.Adapter<NewMessageAdapter.Vi
         imageMessageData.put("messageImage", photo);
 
         databaseReference.child("messages").child(currentTime).setValue(imageMessageData);
-        Log.d("TAGff3", "onClick: ");
 
 
 

@@ -17,7 +17,6 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -123,12 +122,10 @@ public class Chat extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<String> task) {
                 if (!task.isSuccessful()) {
-                    Log.d("TAGgg", "Fetching FCM registration token failed", task.getException());
                     return;
                 }
                 String token = task.getResult();
 
-                Log.d("tokennn", token);
                 Toast.makeText(Chat.this, token, Toast.LENGTH_SHORT).show();
 
                 FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -235,9 +232,6 @@ public class Chat extends AppCompatActivity {
     }
 
     private void sendNotification(String userId, String name, String msg) {
-        Log.w("test", "sendNotification: he is un the method " + userId);
-        Log.w("test", "sendNotification: he is un the method " + name);
-        Log.w("test", "sendNotification: he is un the method " + msg);
         DatabaseReference tokens = databaseReference.child("tokens");
         tokens.orderByKey().equalTo(userId).addValueEventListener(new ValueEventListener() {
             @Override
@@ -247,16 +241,12 @@ public class Chat extends AppCompatActivity {
                     Data data = new Data(firebaseAuth.getCurrentUser().getUid(), name + " : " + msg
                             , "New Message", userId, R.mipmap.chat_app_logo);
                     Sender sender = new Sender(data, token.getToken());
-                    Log.e("test", "onDataChange: " + token.getToken());
 
                     apiService.sendNotification(sender).enqueue(new Callback<MyResponse>() {
                         @Override
                         public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
-                            Log.w("test", "onResponse: Success1");
                             if (response.code() == 200) {
-                                Log.w("test", "onResponse: Failure1");
                                 if (response.body().success != 1) {
-                                    Log.w("test", "onResponse: Failure2");
                                     Toast.makeText(Chat.this, "Failed!!!", Toast.LENGTH_SHORT).show();
                                 }
                             }

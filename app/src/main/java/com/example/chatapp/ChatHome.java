@@ -17,7 +17,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -70,7 +69,6 @@ public class ChatHome extends AppCompatActivity {
         chatIcon.setColorFilter(Color.parseColor("#007EF4"));
         chatIcon.setEnabled(false);
 
-        handleNotificationData();
 
         searchBar = findViewById(R.id.searchBar);
         searchBar.setVisibility(View.INVISIBLE);
@@ -121,19 +119,7 @@ public class ChatHome extends AppCompatActivity {
 
             getTheRecent();
         }
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
-            @Override
-            public void onComplete(@NonNull Task<String> task) {
-                if (!task.isSuccessful()) {
-                    Log.d("TAGgg", "Fetching FCM registration token failed", task.getException());
-                    return;
-                }
-                String token = task.getResult();
 
-                Log.d("tokennn", token);
-                Toast.makeText(ChatHome.this, token, Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
 
@@ -238,28 +224,4 @@ public class ChatHome extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        Log.d("testt", "onNewIntent: intent is worked");
-
-    }
-
-    private void handleNotificationData() {
-
-        Bundle bundle = getIntent().getExtras();
-
-        Log.e("TAGgg", "handleNotificationData: it is inside the method: " + bundle);
-
-        if (bundle != null) {
-            Log.d("TAGgg", "handleNotificationData: it is inside the first if " + bundle);
-
-            if (bundle.containsKey("data1")) {
-                Log.d("data1", "Data:" + bundle.getString("data1"));
-            }
-            if (bundle.containsKey("data2")) {
-                Log.d("data2", "Data:" + bundle.getString("data2"));
-            }
-        }
-    }
 }

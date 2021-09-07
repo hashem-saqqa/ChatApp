@@ -7,7 +7,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -61,8 +60,6 @@ public class PushNotificationService extends FirebaseMessagingService {
         if (remoteMessage.getNotification() != null) {
             String title = remoteMessage.getNotification().getTitle();
             String body = remoteMessage.getNotification().getBody();
-
-            Log.d("testt", "Notification Title: " + title + " - Body: " + body);
 
             showNotification(title, body);
         }

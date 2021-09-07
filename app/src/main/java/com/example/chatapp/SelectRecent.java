@@ -3,10 +3,7 @@ package com.example.chatapp;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -40,8 +37,6 @@ public class SelectRecent extends BottomSheetDialogFragment {
         super.setupDialog(dialog, style);
         view = View.inflate(getContext(), R.layout.select_recent, null);
         dialog.setContentView(view);
-
-        Log.d("SelectRecentStarted", "setupDialog: Started");
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
         firebaseAuth = FirebaseAuth.getInstance();
