@@ -3,6 +3,7 @@ package com.example.chatapp;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -10,9 +11,11 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -45,6 +48,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,7 +66,7 @@ public class Chat extends AppCompatActivity {
     DatabaseReference databaseReference;
     TextView receiverName;
     EditText messageET;
-    ImageView voiceSendIcon;
+    ImageView voiceSendIcon, testImage;
     FirebaseAuth firebaseAuth;
     List<MessageModel> dataSet;
     RecyclerView recyclerView;
@@ -69,6 +74,7 @@ public class Chat extends AppCompatActivity {
     StorageReference storageReference;
     ApiService apiService;
     boolean notify = false;
+    String currentPhotoPath;
 
 
     @Override
@@ -82,6 +88,7 @@ public class Chat extends AppCompatActivity {
         receiverName = findViewById(R.id.receiverName);
         messageET = findViewById(R.id.messageET);
         voiceSendIcon = findViewById(R.id.voiceBtn);
+//        testImage = findViewById(R.id.testImage);
         firebaseAuth = FirebaseAuth.getInstance();
 
         fillTheUserData();
@@ -126,8 +133,6 @@ public class Chat extends AppCompatActivity {
                 }
                 String token = task.getResult();
 
-                Toast.makeText(Chat.this, token, Toast.LENGTH_SHORT).show();
-
                 FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("tokens");
@@ -161,41 +166,70 @@ public class Chat extends AppCompatActivity {
             messageET.getText().clear();
         } else {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(intent, 0);
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.example.chatapp.fileprovider",
+                        photoFile);
+
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(intent, 1);
+            }
         }
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 0 & resultCode == RESULT_OK) {
-            if (data == null) {
-                Toast.makeText(this, "error", Toast.LENGTH_SHORT).show();
-            } else {
+        if (requestCode == 1 & resultCode == RESULT_OK) {
+            Toast.makeText(this, "error", Toast.LENGTH_SHORT).show();
+//                Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath);
+//                testImage.setImageBitmap(bitmap);
+//                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
 
-                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                byte[] bytes = baos.toByteArray();
+            Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] bytes = baos.toByteArray();
 
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
-                String currentTime = sdf.format(new Date());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
+            String currentTime = sdf.format(new Date());
 
-                storageReference = FirebaseStorage.getInstance().getReference(currentTime);
-                storageReference.putBytes(bytes).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                photo = uri.toString();
-                                createImageMessage();
-                            }
-                        });
-                    }
-                });
+            storageReference = FirebaseStorage.getInstance().getReference(currentTime);
+            storageReference.putBytes(bytes).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            photo = uri.toString();
+                            createImageMessage();
+                        }
+                    });
+                }
+            });
 
-            }
         }
 
     }
