@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -54,6 +55,7 @@ public class ChatHomeAdapter extends RecyclerView.Adapter<ChatHomeAdapter.ViewHo
         ChatHomeModel chatHomeModel = DataSet.get(position);
         databaseReference = FirebaseDatabase.getInstance().getReference();
         firebaseAuth = FirebaseAuth.getInstance();
+        holder.readStatus.setVisibility(View.GONE);
 
         databaseReference.child("messages").orderByChild("time").addValueEventListener(new ValueEventListener() {
             @Override
@@ -67,6 +69,18 @@ public class ChatHomeAdapter extends RecyclerView.Adapter<ChatHomeAdapter.ViewHo
                     ) {
                         lastMsg = dataSnapshot.child("messageText").getValue(String.class);
                         lastMsgTime = dataSnapshot.child("time").getValue(String.class);
+
+                        if (dataSnapshot.child("receiver").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid()) &
+                                dataSnapshot.child("status").getValue(String.class).equals("0")) {
+
+                            holder.readStatus.setVisibility(View.VISIBLE);
+
+                        } else if (dataSnapshot.child("receiver").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid()) &
+                                dataSnapshot.child("status").getValue(String.class).equals("1")) {
+
+                            holder.readStatus.setVisibility(View.INVISIBLE);
+
+                        }
                     }
                 }
 
@@ -120,6 +134,8 @@ public class ChatHomeAdapter extends RecyclerView.Adapter<ChatHomeAdapter.ViewHo
         private final TextView userName;
         private final TextView lastMsg;
         private final TextView time;
+        private final ImageView readStatus;
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -128,6 +144,7 @@ public class ChatHomeAdapter extends RecyclerView.Adapter<ChatHomeAdapter.ViewHo
             userName = itemView.findViewById(R.id.userName);
             lastMsg = itemView.findViewById(R.id.lastMsg);
             time = itemView.findViewById(R.id.time);
+            readStatus = itemView.findViewById(R.id.readStatus);
 
         }
 

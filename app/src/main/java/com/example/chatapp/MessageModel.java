@@ -8,32 +8,36 @@ public class MessageModel {
     private String messageText;
     private String receiverImage;
     private String imageMessage;
+    private String status;
+    private boolean lastMsg = false;
 
     public MessageModel() {
     }
 
-    public MessageModel(String sender, String receiver, String time, String messageText, String receiverImage, String imageMessage) {
+    public MessageModel(String sender, String receiver, String time, String messageText, String receiverImage, String imageMessage,String status) {
         this.sender = sender;
         this.receiver = receiver;
         this.time = time;
         this.messageText = messageText;
         this.receiverImage = receiverImage;
         this.imageMessage = imageMessage;
+        this.status = status;
     }
 
-    public MessageModel(String sender, String receiver, String time, String messageText, String receiverImage) {
+//    public MessageModel(String sender, String receiver, String time, String messageText, String receiverImage) {
+//        this.sender = sender;
+//        this.receiver = receiver;
+//        this.time = time;
+//        this.messageText = messageText;
+//        this.receiverImage = receiverImage;
+//    }
+
+    public MessageModel(String sender, String receiver, String time, String messageText,String status) {
         this.sender = sender;
         this.receiver = receiver;
         this.time = time;
         this.messageText = messageText;
-        this.receiverImage = receiverImage;
-    }
-
-    public MessageModel(String sender, String receiver, String time, String messageText) {
-        this.sender = sender;
-        this.receiver = receiver;
-        this.time = time;
-        this.messageText = messageText;
+        this.status = status;
     }
 
 
@@ -92,4 +96,21 @@ public class MessageModel {
     public void setImageMessage(String imageMessage) {
         this.imageMessage = imageMessage;
     }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public boolean isLastMsg() {
+        return lastMsg;
+    }
+
+    public void setLastMsg(boolean lastMsg) {
+        this.lastMsg = lastMsg;
+    }
+
 }

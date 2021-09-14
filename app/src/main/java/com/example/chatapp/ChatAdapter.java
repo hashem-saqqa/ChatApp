@@ -51,7 +51,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             return new SenderImageViewHolder(senderImageView);
         } else if (viewType == 3) {
             return new ReceiverImageViewHolder(receiverImageView);
-        }else {
+        } else {
             return null;
         }
 
@@ -90,6 +90,10 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             senderViewHolder.senderMessage.setText(messageModel.getMessageText());
             senderViewHolder.senderMessageTime.setText(hour + ":" + minute);
 
+            if (messageModel.isLastMsg() & messageModel.getStatus().equals("1")) {
+                senderViewHolder.seenStatus.setVisibility(View.VISIBLE);
+            }
+
         } else if (holder.getItemViewType() == 1) {
 
 
@@ -112,7 +116,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             receiverViewHolder.receiverMessage.setText(messageModel.getMessageText());
             receiverViewHolder.receiverMessageTime.setText(hour + ":" + minute);
 
-        }else if (holder.getItemViewType() == 2){
+        } else if (holder.getItemViewType() == 2) {
 
             SenderImageViewHolder senderImageViewHolder = (SenderImageViewHolder) holder;
 
@@ -133,7 +137,11 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             });
             senderImageViewHolder.senderMessageTime.setText(hour + ":" + minute);
 
-        }else if (holder.getItemViewType() == 3){
+            if (messageModel.isLastMsg() & messageModel.getStatus().equals("1")) {
+                senderImageViewHolder.seenStatus.setVisibility(View.VISIBLE);
+            }
+
+        } else if (holder.getItemViewType() == 3) {
 
             ReceiverImageViewHolder receiverImageViewHolder = (ReceiverImageViewHolder) holder;
 
@@ -177,7 +185,6 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             receiverImageViewHolder.receiverMessageTime.setText(hour + ":" + minute);
         }
 
-
     }
 
     @Override
@@ -204,12 +211,15 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private final TextView senderMessage;
         private final TextView senderMessageTime;
+        private final TextView seenStatus;
 
         public SenderViewHolder(@NonNull View itemView) {
             super(itemView);
 
             senderMessage = itemView.findViewById(R.id.messageSenderTV);
             senderMessageTime = itemView.findViewById(R.id.timeSenderTV);
+            seenStatus = itemView.findViewById(R.id.seenStatus);
+
 
         }
     }
@@ -219,6 +229,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private final CircleImageView profileImage;
         private final ImageView receiverMessageImage;
         private final TextView receiverMessageTime;
+
 
         public ReceiverImageViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -233,12 +244,15 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private final ImageView senderMessageImage;
         private final TextView senderMessageTime;
+        private final TextView seenStatus;
 
         public SenderImageViewHolder(@NonNull View itemView) {
             super(itemView);
 
             senderMessageImage = itemView.findViewById(R.id.messageSenderIV);
             senderMessageTime = itemView.findViewById(R.id.timeSenderTV);
+            seenStatus = itemView.findViewById(R.id.seenStatus);
+
         }
     }
 }

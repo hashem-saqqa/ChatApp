@@ -20,6 +20,7 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -66,7 +67,7 @@ public class Chat extends AppCompatActivity {
     DatabaseReference databaseReference;
     TextView receiverName;
     EditText messageET;
-    ImageView voiceSendIcon, testImage;
+    ImageView voiceSendIcon;
     FirebaseAuth firebaseAuth;
     List<MessageModel> dataSet;
     RecyclerView recyclerView;
@@ -88,7 +89,6 @@ public class Chat extends AppCompatActivity {
         receiverName = findViewById(R.id.receiverName);
         messageET = findViewById(R.id.messageET);
         voiceSendIcon = findViewById(R.id.voiceBtn);
-//        testImage = findViewById(R.id.testImage);
         firebaseAuth = FirebaseAuth.getInstance();
 
         fillTheUserData();
@@ -107,8 +107,6 @@ public class Chat extends AppCompatActivity {
                 } else if (count == 0) {
                     voiceSendIcon.setImageResource(R.drawable.btn_send);
                 }
-
-
             }
 
             @Override
@@ -241,7 +239,7 @@ public class Chat extends AppCompatActivity {
         notify = true;
 
         MessageModel message = new MessageModel(firebaseAuth.getCurrentUser().getUid()
-                , userId, currentTime, messageET.getText().toString());
+                , userId, currentTime, messageET.getText().toString(), "0");
 
         databaseReference.child("messages").child(currentTime).setValue(message);
 
@@ -342,7 +340,12 @@ public class Chat extends AppCompatActivity {
                                     dataSnapshot.child("time").getValue(String.class),
                                     dataSnapshot.child("messageText").getValue(String.class),
                                     receiverImage,
-                                    "null"));
+                                    "null",
+                                    dataSnapshot.child("status").getValue(String.class)
+                            ));
+                            if (dataSnapshot.child("receiver").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid())) {
+                                databaseReference.child("messages").child(dataSnapshot.getKey()).child("status").setValue("1");
+                            }
                         } else if (dataSnapshot.child("messageImage").exists()) {
 
 
@@ -352,12 +355,32 @@ public class Chat extends AppCompatActivity {
                                     dataSnapshot.child("time").getValue(String.class),
                                     "null",
                                     receiverImage,
-                                    dataSnapshot.child("messageImage").getValue(String.class)
+                                    dataSnapshot.child("messageImage").getValue(String.class),
+                                    dataSnapshot.child("status").getValue(String.class)
                             ));
-                        }
 
+                            if (dataSnapshot.child("receiver").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid())) {
+                                databaseReference.child("messages").child(dataSnapshot.getKey()).child("status").setValue("1");
+                            }
+                        }
+//                        if (dataSet.get(dataSet.size()-1).getSender().equals(firebaseAuth.getCurrentUser().getUid())){
+//                        }
+
+
+//                        if (dataSnapshot.child("sender").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid()) &
+//                                dataSnapshot.child("status").getValue(String.class).equals("1")) {
+//                            Log.e("seenTest", "onDataChange: VISIBLE");
+//                            seenStatus.setVisibility(View.VISIBLE);
+//
+//                        } else if (dataSnapshot.child("sender").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid()) &
+//                                dataSnapshot.child("status").getValue(String.class).equals("0")) {
+//                            Log.e("seenTest", "onDataChange: INVISIBLE");
+//                            seenStatus.setVisibility(View.INVISIBLE);
+//
+//                        }
                     }
                 }
+                dataSet.get(dataSet.size()-1).setLastMsg(true);
 
                 recyclerView = findViewById(R.id.messagesRV);
                 linearLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -373,7 +396,7 @@ public class Chat extends AppCompatActivity {
         });
 
     }
-
+// edit to back to the chatHome and destroy
     public void BackButton(View view) {
         finish();
     }

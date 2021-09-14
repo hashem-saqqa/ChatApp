@@ -13,15 +13,14 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="40dp"
+        android:onClick="BackButton"
         android:src="@drawable/chevron_left"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0"
-        android:onClick="BackButton"
-        />
+        app:layout_constraintVertical_bias="0" />
 
 
     <TextView
@@ -39,71 +38,91 @@
         app:layout_constraintVertical_bias="0" />
 
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="0dp"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintBottom_toTopOf="@id/messageLL"
-    app:layout_constraintTop_toBottomOf="@id/receiverName"
-    app:layout_constraintVertical_bias="0"
-    android:layout_marginTop="20dp"
-    android:layout_marginHorizontal="20dp"
-    android:layout_marginBottom="5dp"
-    >
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/messagesRV"
+    <LinearLayout
+        android:id="@+id/mainLL"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
-</LinearLayout>
-<!--    <ImageView-->
-<!--        android:id="@+id/testImage"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        />-->
-
-<LinearLayout
-    android:id="@+id/messageLL"
-    android:layout_width="match_parent"
-    android:layout_height="55dp"
-    android:layout_marginHorizontal="20dp"
-    android:background="@drawable/rounded_corners"
-    android:backgroundTint="#2B2B2B"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="1"
-    android:orientation="horizontal"
-    android:layout_marginBottom="5dp"
-    >
-    <EditText
-        android:id="@+id/messageET"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_weight="1"
+        android:layout_height="0dp"
         android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/messageLL"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/receiverName"
+        app:layout_constraintVertical_bias="0">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/messagesRV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
+<!--        <TextView-->
+<!--            android:id="@+id/seenStatus"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="right"-->
+<!--            android:layout_marginTop="5dp"-->
+<!--            android:text="seen"-->
+<!--            android:textColor="#888888"-->
+<!--            android:textSize="20dp"-->
+<!--            />-->
+    </LinearLayout>
+
+<!--        <TextView-->
+<!--            android:id="@+id/seenStatus"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/mainLL"-->
+<!--            app:layout_constraintBottom_toTopOf="@id/messageLL"-->
+<!--            android:layout_marginTop="5dp"-->
+<!--            android:text="seen"-->
+<!--            android:textSize="20dp"-->
+<!--            android:textColor="#888888"-->
+<!--            app:layout_constraintHorizontal_bias="1"-->
+<!--            android:layout_marginHorizontal="30dp"-->
+<!--            app:layout_constraintVertical_bias="0"-->
+<!--            />-->
+
+    <LinearLayout
+        android:id="@+id/messageLL"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/rounded_corners"
         android:backgroundTint="#2B2B2B"
-        android:hint="Type your message"
-        android:textColorHint="#CCCCCC"
-        android:textColor="#CCCCCC"
-        android:layout_gravity="center"
-        android:textSize="15dp"
-        />
-    <ImageView
-        android:id="@+id/voiceBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/btn_send"
-        android:layout_marginRight="10dp"
-        android:layout_gravity="center"
-        android:onClick="sendImageOrMsg"
-        />
-</LinearLayout>
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1">
+
+        <EditText
+            android:id="@+id/messageET"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="20dp"
+            android:layout_weight="1"
+            android:backgroundTint="#2B2B2B"
+            android:hint="Type your message"
+            android:textColor="#CCCCCC"
+            android:textColorHint="#CCCCCC"
+            android:textSize="15dp" />
+
+        <ImageView
+            android:id="@+id/voiceBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginRight="10dp"
+            android:onClick="sendImageOrMsg"
+            android:src="@drawable/btn_send" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
