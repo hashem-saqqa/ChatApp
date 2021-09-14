@@ -76,6 +76,7 @@ public class Chat extends AppCompatActivity {
     ApiService apiService;
     boolean notify = false;
     String currentPhotoPath;
+    ValueEventListener valueEventListener;
 
 
     @Override
@@ -320,7 +321,9 @@ public class Chat extends AppCompatActivity {
 
         dataSet = new ArrayList<>();
 
-        databaseReference.child("messages").orderByChild("time").addValueEventListener(new ValueEventListener() {
+
+
+                valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 dataSet.clear();
@@ -393,11 +396,24 @@ public class Chat extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });
+        };
+        databaseReference.child("messages").orderByChild("time").addValueEventListener(valueEventListener);
 
     }
 // edit to back to the chatHome and destroy
     public void BackButton(View view) {
-        finish();
+        Intent intent = new Intent(this,ChatHome.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        databaseReference.child("messages").removeEventListener(valueEventListener);
+        startActivity(intent);
+//        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        databaseReference.child("messages").removeEventListener(valueEventListener);
+        this.finish();
+
     }
 }
