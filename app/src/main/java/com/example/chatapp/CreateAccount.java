@@ -81,6 +81,8 @@ public class CreateAccount extends AppCompatActivity {
         phone = phoneET.getText().toString().trim();
         name = nameET.getText().toString().trim();
 
+        Toast.makeText(this, "Please Wait", Toast.LENGTH_SHORT).show();
+
         if (!email.equals("") & !phone.equals("") & !name.equals("") & !password.equals("") & profileAvatar != null) {
             photo = profileAvatar.toString().trim();
             firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -94,6 +96,22 @@ public class CreateAccount extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         uploadImageToFirebase();
+
+                                        firebaseAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    Toast.makeText(CreateAccount.this, "Go verify your Email", Toast.LENGTH_LONG).show();
+
+                                                    Intent intent = new Intent(getApplicationContext(), ChatHome.class);
+                                                    startActivity(intent);
+
+                                                } else {
+                                                    Toast.makeText(CreateAccount.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+
 
                                     }
                                 });
@@ -123,8 +141,6 @@ public class CreateAccount extends AppCompatActivity {
                                 .child("photo").setValue(photo).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                Intent intent = new Intent(getApplicationContext(), ChatHome.class);
-                                startActivity(intent);
                             }
                         });
 

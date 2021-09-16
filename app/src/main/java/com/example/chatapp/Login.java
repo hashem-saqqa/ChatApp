@@ -58,10 +58,15 @@ public class Login extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-                        Intent intent = new Intent(getApplicationContext(), ChatHome.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        intent.putExtra("loginChecked",false);
-                        startActivity(intent);
+                        if (firebaseAuth.getCurrentUser().isEmailVerified()) {
+                            Intent intent = new Intent(getApplicationContext(), ChatHome.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            intent.putExtra("loginChecked", false);
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(Login.this, "Verify your Email first", Toast.LENGTH_SHORT).show();
+                        }
+
                     } else {
                         Toast.makeText(Login.this, "check the email or the password", Toast.LENGTH_SHORT).show();
                     }
@@ -93,6 +98,21 @@ public class Login extends AppCompatActivity {
                 passwordET.setSelection(passwordET.getText().toString().length());
 
             }
+        }
+    }
+
+    public void resetPassword(View view) {
+        if (!emailET.getText().toString().equals("")) {
+            firebaseAuth.sendPasswordResetEmail(emailET.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(Login.this, "Reset password Email sent to your Email", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        } else {
+            Toast.makeText(this, "Enter the Email please", Toast.LENGTH_SHORT).show();
         }
     }
 
