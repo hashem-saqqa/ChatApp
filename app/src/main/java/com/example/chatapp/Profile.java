@@ -146,4 +146,9 @@ public class Profile extends AppCompatActivity {
             selectRecent.show(getSupportFragmentManager(), "SelectRecent");
         }
     }
+
+    public void editProfile(View view) {
+        Intent intent = new Intent(this,EditProfile.class);
+        startActivity(intent);
+    }
 }

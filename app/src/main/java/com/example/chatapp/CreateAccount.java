@@ -84,7 +84,6 @@ public class CreateAccount extends AppCompatActivity {
         Toast.makeText(this, "Please Wait", Toast.LENGTH_SHORT).show();
 
         if (!email.equals("") & !phone.equals("") & !name.equals("") & !password.equals("") & profileAvatar != null) {
-            photo = profileAvatar.toString().trim();
             firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
@@ -143,8 +142,6 @@ public class CreateAccount extends AppCompatActivity {
                             public void onComplete(@NonNull Task<Void> task) {
                             }
                         });
-
-
                     }
                 });
             }

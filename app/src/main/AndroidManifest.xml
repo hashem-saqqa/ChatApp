@@ -9,9 +9,10 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-feature android:name="android.hardware.camera"
-        android:required="true" />
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
 
     <application
         android:name=".ChatApp"
@@ -21,6 +22,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ChatApp">
+        <activity android:name=".EditProfile"></activity>
         <activity
             android:name=".Profile"
             android:theme="@style/AppTheme_ForAppBar" />
@@ -28,9 +30,10 @@
         <activity android:name=".Chat" />
         <activity
             android:name=".ChatHome"
-            android:theme="@style/AppTheme_ForAppBar" >
+            android:theme="@style/AppTheme_ForAppBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -45,18 +48,20 @@
         <activity
             android:name=".CreateAccount"
             android:label="@string/title_activity_create_account" />
-        <activity android:name=".Login"/>
+        <activity android:name=".Login" />
 
         <service
             android:name=".PushNotificationService"
             android:exported="false">
             <intent-filter>
+
                 <!-- action to listen token changes -->
-<!--                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />-->
+                <!-- <action android:name="com.google.firebase.INSTANCE_ID_EVENT" /> -->
                 <!-- action to listen incoming push notification -->
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.chatapp.fileprovider"
@@ -67,6 +72,5 @@
                 android:resource="@xml/file_paths" />
         </provider>
     </application>
-
 
 </manifest>

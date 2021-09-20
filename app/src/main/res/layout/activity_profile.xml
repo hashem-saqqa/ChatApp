@@ -48,6 +48,24 @@
             android:textStyle="bold"
             />
         <TextView
+            android:id="@+id/editProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/NameTV"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_bias="1"
+            android:layout_marginHorizontal="20dp"
+            android:text="Edit Profile"
+            android:textColor="#007EF4"
+            android:textSize="15dp"
+            android:onClick="editProfile"
+            app:layout_constraintVertical_bias="0"
+            android:layout_marginTop="20dp"
+            />
+        <TextView
+            android:id="@+id/logout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@id/NameTV"
@@ -60,6 +78,9 @@
             android:textColor="#007EF4"
             android:textSize="15dp"
             android:onClick="LogOut"
+            android:textStyle="bold"
+            app:layout_constraintVertical_bias="1"
+            android:layout_marginBottom="20dp"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
