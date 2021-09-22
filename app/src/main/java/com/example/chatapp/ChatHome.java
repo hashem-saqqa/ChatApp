@@ -17,10 +17,12 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -43,6 +45,7 @@ public class ChatHome extends AppCompatActivity {
     ImageView searchIcon, newMessageIcon;
     TextView newMessageTV, noRecents;
     ConstraintLayout searchBar;
+    int i;
 
 
     @Override
@@ -120,39 +123,56 @@ public class ChatHome extends AppCompatActivity {
 
     private void getTheRecent() {
 
-        dataSet = new ArrayList<>();
-
         databaseReference.child("users").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                dataSet.clear();
+                dataSet = new ArrayList<>();
 
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     if (!dataSnapshot.getKey().equals(firebaseAuth.getCurrentUser().getUid())) {
-                        databaseReference.child("messages").addListenerForSingleValueEvent(new ValueEventListener() {
+
+
+                        databaseReference.child("messages").addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
+
                                 for (DataSnapshot dataSnapshot1 : snapshot.getChildren()) {
+
                                     if (dataSnapshot1.child("receiver").getValue(String.class).equals(dataSnapshot.getKey()) &
                                             dataSnapshot1.child("sender").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid()) |
                                             dataSnapshot1.child("sender").getValue(String.class).equals(dataSnapshot.getKey()) &
                                                     dataSnapshot1.child("receiver").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid())
                                     ) {
+
+                                        if (i == 0) {
+                                            Log.e("TAGG", "onDataChange: clear");
+                                            dataSet.clear();
+                                            i++;
+                                        }
+
+
+                                        Log.e("TAGG", "onDataChange: add");
                                         dataSet.add(new ChatHomeModel(
                                                 dataSnapshot.getKey(),
                                                 dataSnapshot.child("photo").getValue(String.class),
                                                 dataSnapshot.child("name").getValue(String.class)
                                         ));
+
+                                        recyclerView = findViewById(R.id.chatHomeRV);
+                                        linearLayoutManager = new LinearLayoutManager(getApplicationContext());
+                                        recyclerView.setLayoutManager(linearLayoutManager);
+                                        chatHomeAdapter = new ChatHomeAdapter(ChatHome.this, dataSet);
+                                        recyclerView.setAdapter(chatHomeAdapter);
+
                                         noRecents.setVisibility(View.GONE);
                                         break;
+
+
                                     }
+
                                 }
-                                recyclerView = findViewById(R.id.chatHomeRV);
-                                linearLayoutManager = new LinearLayoutManager(getApplicationContext());
-                                recyclerView.setLayoutManager(linearLayoutManager);
-                                chatHomeAdapter = new ChatHomeAdapter(ChatHome.this, dataSet);
-                                recyclerView.setAdapter(chatHomeAdapter);
+
                             }
 
                             @Override
@@ -161,7 +181,6 @@ public class ChatHome extends AppCompatActivity {
                             }
                         });
                     }
-
                 }
             }
 

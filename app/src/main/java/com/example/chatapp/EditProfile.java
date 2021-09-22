@@ -40,6 +40,7 @@ public class EditProfile extends AppCompatActivity {
 
         phoneET = findViewById(R.id.phoneET);
         nameET = findViewById(R.id.nameET);
+        profileImage = findViewById(R.id.imageView);
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
         firebaseAuth = FirebaseAuth.getInstance();

@@ -203,9 +203,6 @@ public class Chat extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 & resultCode == RESULT_OK) {
             Toast.makeText(this, "error", Toast.LENGTH_SHORT).show();
-//                Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath);
-//                testImage.setImageBitmap(bitmap);
-//                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
 
             Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -306,13 +303,32 @@ public class Chat extends AppCompatActivity {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
         String currentTime = sdf.format(new Date());
 
+        notify = true;
+
         HashMap<String, Object> imageMessageData = new HashMap<>();
         imageMessageData.put("sender", firebaseAuth.getCurrentUser().getUid());
         imageMessageData.put("receiver", userId);
         imageMessageData.put("time", currentTime);
         imageMessageData.put("messageImage", photo);
+        imageMessageData.put("status", "0");
 
         databaseReference.child("messages").child(currentTime).setValue(imageMessageData);
+
+        databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (notify) {
+                    Log.e("TAGG", "onDataChange: working in the images" );
+                    sendNotification(userId, snapshot.child("name").getValue(String.class), "photo");
+                }
+                notify = false;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
 
     }
@@ -322,8 +338,7 @@ public class Chat extends AppCompatActivity {
         dataSet = new ArrayList<>();
 
 
-
-                valueEventListener = new ValueEventListener() {
+        valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 dataSet.clear();
@@ -366,24 +381,11 @@ public class Chat extends AppCompatActivity {
                                 databaseReference.child("messages").child(dataSnapshot.getKey()).child("status").setValue("1");
                             }
                         }
-//                        if (dataSet.get(dataSet.size()-1).getSender().equals(firebaseAuth.getCurrentUser().getUid())){
-//                        }
-
-
-//                        if (dataSnapshot.child("sender").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid()) &
-//                                dataSnapshot.child("status").getValue(String.class).equals("1")) {
-//                            Log.e("seenTest", "onDataChange: VISIBLE");
-//                            seenStatus.setVisibility(View.VISIBLE);
-//
-//                        } else if (dataSnapshot.child("sender").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid()) &
-//                                dataSnapshot.child("status").getValue(String.class).equals("0")) {
-//                            Log.e("seenTest", "onDataChange: INVISIBLE");
-//                            seenStatus.setVisibility(View.INVISIBLE);
-//
-//                        }
                     }
                 }
-                dataSet.get(dataSet.size()-1).setLastMsg(true);
+                if (!dataSet.isEmpty()) {
+                    dataSet.get(dataSet.size() - 1).setLastMsg(true);
+                }
 
                 recyclerView = findViewById(R.id.messagesRV);
                 linearLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -400,9 +402,10 @@ public class Chat extends AppCompatActivity {
         databaseReference.child("messages").orderByChild("time").addValueEventListener(valueEventListener);
 
     }
-// edit to back to the chatHome and destroy
+
+    // edit to back to the chatHome and destroy
     public void BackButton(View view) {
-        Intent intent = new Intent(this,ChatHome.class);
+        Intent intent = new Intent(this, ChatHome.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         databaseReference.child("messages").removeEventListener(valueEventListener);
         startActivity(intent);
