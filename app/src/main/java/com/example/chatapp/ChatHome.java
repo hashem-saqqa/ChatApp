@@ -122,7 +122,7 @@ public class ChatHome extends AppCompatActivity {
 
 
     private void getTheRecent() {
-
+        i = 0;
         databaseReference.child("users").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -130,12 +130,18 @@ public class ChatHome extends AppCompatActivity {
 
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     if (!dataSnapshot.getKey().equals(firebaseAuth.getCurrentUser().getUid())) {
-
+                        i++;
+                        int counter = i;
 
                         databaseReference.child("messages").addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
+
+                                if (counter == 1) {
+                                    dataSet.clear();
+                                    i++;
+                                }
 
                                 for (DataSnapshot dataSnapshot1 : snapshot.getChildren()) {
 
@@ -145,14 +151,6 @@ public class ChatHome extends AppCompatActivity {
                                                     dataSnapshot1.child("receiver").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid())
                                     ) {
 
-                                        if (i == 0) {
-                                            Log.e("TAGG", "onDataChange: clear");
-                                            dataSet.clear();
-                                            i++;
-                                        }
-
-
-                                        Log.e("TAGG", "onDataChange: add");
                                         dataSet.add(new ChatHomeModel(
                                                 dataSnapshot.getKey(),
                                                 dataSnapshot.child("photo").getValue(String.class),
