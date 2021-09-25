@@ -16,6 +16,7 @@ import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -247,8 +248,12 @@ public class Chat extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 //                User user = snapshot.getValue(User.class);
                 if (notify) {
-
-                    sendNotification(userId, snapshot.child("name").getValue(String.class), msg);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            sendNotification(userId, snapshot.child("name").getValue(String.class), msg);
+                        }
+                    }, 3000);
                 }
                 notify = false;
             }
@@ -262,31 +267,52 @@ public class Chat extends AppCompatActivity {
     }
 
     private void sendNotification(String userId, String name, String msg) {
-        DatabaseReference tokens = databaseReference.child("tokens");
-        tokens.orderByKey().equalTo(userId).addValueEventListener(new ValueEventListener() {
+        databaseReference.child("messages").orderByChild("time").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    Token token = dataSnapshot.getValue(Token.class);
-                    Data data = new Data(firebaseAuth.getCurrentUser().getUid(), name + " : " + msg
-                            , "New Message", userId, R.mipmap.chat_app_logo);
-                    Sender sender = new Sender(data, token.getToken());
+                    if (dataSnapshot.child("receiver").getValue(String.class).equals(userId) &
+                            dataSnapshot.child("sender").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid()) |
+                            dataSnapshot.child("sender").getValue(String.class).equals(userId) &
+                                    dataSnapshot.child("receiver").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid())
+                    ) {
+                        if (dataSnapshot.child("status").getValue(String.class).equals("0")) {
 
-                    apiService.sendNotification(sender).enqueue(new Callback<MyResponse>() {
-                        @Override
-                        public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
-                            if (response.code() == 200) {
-                                if (response.body().success != 1) {
-                                    Toast.makeText(Chat.this, "Failed!!!", Toast.LENGTH_SHORT).show();
+                            DatabaseReference tokens = databaseReference.child("tokens");
+                            tokens.orderByKey().equalTo(userId).addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                        Token token = dataSnapshot.getValue(Token.class);
+                                        Data data = new Data(firebaseAuth.getCurrentUser().getUid(), name + " : " + msg
+                                                , "New Message", userId, R.mipmap.chat_app_logo);
+                                        Sender sender = new Sender(data, token.getToken());
+
+                                        apiService.sendNotification(sender).enqueue(new Callback<MyResponse>() {
+                                            @Override
+                                            public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
+                                                if (response.code() == 200) {
+                                                    if (response.body().success != 1) {
+                                                        Toast.makeText(Chat.this, "Failed!!!", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<MyResponse> call, Throwable t) {
+
+                                            }
+                                        });
+                                    }
                                 }
-                            }
-                        }
 
-                        @Override
-                        public void onFailure(Call<MyResponse> call, Throwable t) {
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
 
+                                }
+                            });
                         }
-                    });
+                    }
                 }
             }
 
@@ -318,7 +344,7 @@ public class Chat extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (notify) {
-                    Log.e("TAGG", "onDataChange: working in the images" );
+                    Log.e("TAGG", "onDataChange: working in the images");
                     sendNotification(userId, snapshot.child("name").getValue(String.class), "photo");
                 }
                 notify = false;
