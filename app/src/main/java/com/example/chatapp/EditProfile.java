@@ -73,12 +73,12 @@ public class EditProfile extends AppCompatActivity {
         name = nameET.getText().toString();
         phone = phoneET.getText().toString();
 
-        if (!phone.equals("")) {
+        if (!name.equals("")) {
             databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).child("name").setValue(name);
             Toast.makeText(this, "Data updated", Toast.LENGTH_SHORT).show();
             finish();
         }
-        if (!name.equals("")) {
+        if (!phone.equals("")) {
             databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).child("phone").setValue(phone);
             Toast.makeText(this, "Data updated", Toast.LENGTH_SHORT).show();
             finish();
