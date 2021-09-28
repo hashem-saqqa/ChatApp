@@ -59,11 +59,14 @@ public class Login extends AppCompatActivity {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
                         if (firebaseAuth.getCurrentUser().isEmailVerified()) {
+
                             Intent intent = new Intent(getApplicationContext(), ChatHome.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             intent.putExtra("loginChecked", false);
                             startActivity(intent);
+
                         } else {
+                            firebaseAuth.signOut();
                             Toast.makeText(Login.this, "Verify your Email first", Toast.LENGTH_SHORT).show();
                         }
 

@@ -203,7 +203,7 @@ public class Chat extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 & resultCode == RESULT_OK) {
-            Toast.makeText(this, "error", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please Wait", Toast.LENGTH_SHORT).show();
 
             Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -251,6 +251,7 @@ public class Chat extends AppCompatActivity {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
+
                             sendNotification(userId, snapshot.child("name").getValue(String.class), msg);
                         }
                     }, 3000);

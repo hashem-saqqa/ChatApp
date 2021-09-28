@@ -102,7 +102,7 @@ public class CreateAccount extends AppCompatActivity {
                                                 if (task.isSuccessful()) {
                                                     Toast.makeText(CreateAccount.this, "Go verify your Email", Toast.LENGTH_LONG).show();
 
-                                                    Intent intent = new Intent(getApplicationContext(), ChatHome.class);
+                                                    Intent intent = new Intent(getApplicationContext(), Login.class);
                                                     startActivity(intent);
 
                                                 } else {
