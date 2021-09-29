@@ -2,6 +2,8 @@ package com.example.chatapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.icu.text.SimpleDateFormat;
+import android.icu.util.TimeZone;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +24,8 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -103,8 +107,23 @@ public class ChatHomeAdapter extends RecyclerView.Adapter<ChatHomeAdapter.ViewHo
                     holder.userName.setText(chatHomeModel.getUserName());
                     holder.lastMsg.setText(lastMsg);
 
-                    String hour = lastMsgTime.substring(8, 10);
-                    String minute = lastMsgTime.substring(10, 12);
+                    String globalTime = lastMsgTime;
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+                    sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+                    Date date = null;
+                    try {
+                        date = sdf.parse(globalTime);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                    sdf.setTimeZone(TimeZone.getDefault());
+                    String currentTime = sdf.format(date);
+
+
+                    String hour = currentTime.substring(8, 10);
+                    String minute = currentTime.substring(10, 12);
 
                     holder.time.setText(hour + ":" + minute);
                 }

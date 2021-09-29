@@ -246,10 +246,12 @@ public class Chat extends AppCompatActivity {
 
     }
 
-    private void createMessage() throws ParseException {
+    private void createMessage()  {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
         String currentTime = sdf.format(new Date());
+
+        Log.e("TAGg", "createMessage: "+currentTime);
 
         notify = true;
 
@@ -467,5 +469,12 @@ public class Chat extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         databaseReference.child("messages").removeEventListener(valueEventListener);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        databaseReference.child("messages").orderByChild("time").addValueEventListener(valueEventListener);
+
     }
 }

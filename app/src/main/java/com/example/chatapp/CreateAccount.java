@@ -30,7 +30,7 @@ import java.io.File;
 
 public class CreateAccount extends AppCompatActivity {
     EditText passwordET, emailET, phoneET, nameET;
-    String password, email, phone, name, photo;
+    String password, email, phone, name, photo, userId;
     ImageView profileImage;
     Uri profileAvatar = null;
     FirebaseAuth firebaseAuth;
@@ -89,8 +89,9 @@ public class CreateAccount extends AppCompatActivity {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
                         User user = new User(name, email, phone);
+                        userId = firebaseAuth.getCurrentUser().getUid();
 
-                        databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).setValue(user)
+                        databaseReference.child("users").child(userId).setValue(user)
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
@@ -128,7 +129,7 @@ public class CreateAccount extends AppCompatActivity {
     }
 
     private void uploadImageToFirebase() {
-        storageReference = FirebaseStorage.getInstance().getReference(firebaseAuth.getCurrentUser().getUid());
+        storageReference = FirebaseStorage.getInstance().getReference(userId);
         storageReference.putFile(profileAvatar).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -136,7 +137,7 @@ public class CreateAccount extends AppCompatActivity {
                     @Override
                     public void onSuccess(Uri uri) {
                         photo = uri.toString();
-                        databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid())
+                        databaseReference.child("users").child(userId)
                                 .child("photo").setValue(photo).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {

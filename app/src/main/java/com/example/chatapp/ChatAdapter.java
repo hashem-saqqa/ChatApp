@@ -1,6 +1,8 @@
 package com.example.chatapp;
 
 import android.content.Context;
+import android.icu.text.SimpleDateFormat;
+import android.icu.util.TimeZone;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,8 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -84,8 +88,22 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (holder.getItemViewType() == 0) {
             SenderViewHolder senderViewHolder = (SenderViewHolder) holder;
 
-            String hour = messageModel.getTime().substring(8, 10);
-            String minute = messageModel.getTime().substring(10, 12);
+            String globalTime = messageModel.getTime();
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+            Date date = null;
+            try {
+                date = sdf.parse(globalTime);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            sdf.setTimeZone(TimeZone.getDefault());
+            String currentTime = sdf.format(date);
+
+
+            String hour = currentTime.substring(8, 10);
+            String minute = currentTime.substring(10, 12);
 
             senderViewHolder.senderMessage.setText(messageModel.getMessageText());
             senderViewHolder.senderMessageTime.setText(hour + ":" + minute);
@@ -99,8 +117,22 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             ReceiverViewHolder receiverViewHolder = (ReceiverViewHolder) holder;
 
-            String hour = messageModel.getTime().substring(8, 10);
-            String minute = messageModel.getTime().substring(10, 12);
+            String globalTime = messageModel.getTime();
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+            Date date = null;
+            try {
+                date = sdf.parse(globalTime);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            sdf.setTimeZone(TimeZone.getDefault());
+            String currentTime = sdf.format(date);
+
+
+            String hour = currentTime.substring(8, 10);
+            String minute = currentTime.substring(10, 12);
 
             Picasso.get().load(messageModel.getReceiverImage()).networkPolicy(NetworkPolicy.OFFLINE).into(receiverViewHolder.profileImage, new Callback() {
                 @Override
@@ -120,8 +152,22 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             SenderImageViewHolder senderImageViewHolder = (SenderImageViewHolder) holder;
 
-            String hour = messageModel.getTime().substring(8, 10);
-            String minute = messageModel.getTime().substring(10, 12);
+            String globalTime = messageModel.getTime();
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+            Date date = null;
+            try {
+                date = sdf.parse(globalTime);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            sdf.setTimeZone(TimeZone.getDefault());
+            String currentTime = sdf.format(date);
+
+
+            String hour = currentTime.substring(8, 10);
+            String minute = currentTime.substring(10, 12);
 
             Picasso.get().load(messageModel.getImageMessage()).networkPolicy(NetworkPolicy.OFFLINE).into(senderImageViewHolder.senderMessageImage, new Callback() {
                 @Override
@@ -145,8 +191,21 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             ReceiverImageViewHolder receiverImageViewHolder = (ReceiverImageViewHolder) holder;
 
-            String hour = messageModel.getTime().substring(8, 10);
-            String minute = messageModel.getTime().substring(10, 12);
+            String globalTime = messageModel.getTime();
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+            Date date = null;
+            try {
+                date = sdf.parse(globalTime);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            sdf.setTimeZone(TimeZone.getDefault());
+            String currentTime = sdf.format(date);
+
+            String hour = currentTime.substring(8, 10);
+            String minute = currentTime.substring(10, 12);
 
             Picasso.get().load(messageModel.getReceiverImage()).networkPolicy(NetworkPolicy.OFFLINE).into(receiverImageViewHolder.profileImage, new Callback() {
                 @Override
