@@ -12,7 +12,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.icu.text.DateFormat;
 import android.icu.text.SimpleDateFormat;
+import android.icu.util.TimeZone;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -53,7 +55,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -119,6 +123,16 @@ public class Chat extends AppCompatActivity {
         });
         getTheMessages();
 
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+            Date date = sdf.parse("20210929102139");
+            sdf.setTimeZone(TimeZone.getDefault());
+            String currentTime2 = sdf.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         updateToken();
         apiService = Client.getClient("https://fcm.googleapis.com/").create(ApiService.class);
 
@@ -160,7 +174,7 @@ public class Chat extends AppCompatActivity {
         });
     }
 
-    public void sendImageOrMsg(View view) {
+    public void sendImageOrMsg(View view) throws ParseException {
         if (!messageET.getText().toString().equals("")) {
             createMessage();
             messageET.getText().clear();
@@ -210,7 +224,8 @@ public class Chat extends AppCompatActivity {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             byte[] bytes = baos.toByteArray();
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
             String currentTime = sdf.format(new Date());
 
             storageReference = FirebaseStorage.getInstance().getReference(currentTime);
@@ -231,8 +246,9 @@ public class Chat extends AppCompatActivity {
 
     }
 
-    private void createMessage() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
+    private void createMessage() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
         String currentTime = sdf.format(new Date());
 
         notify = true;
@@ -327,7 +343,8 @@ public class Chat extends AppCompatActivity {
     }
 
     private void createImageMessage() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
         String currentTime = sdf.format(new Date());
 
         notify = true;
@@ -345,7 +362,6 @@ public class Chat extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (notify) {
-                    Log.e("TAGG", "onDataChange: working in the images");
                     sendNotification(userId, snapshot.child("name").getValue(String.class), "photo");
                 }
                 notify = false;
@@ -445,5 +461,11 @@ public class Chat extends AppCompatActivity {
         databaseReference.child("messages").removeEventListener(valueEventListener);
         this.finish();
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        databaseReference.child("messages").removeEventListener(valueEventListener);
     }
 }

@@ -132,16 +132,13 @@ public class ChatHome extends AppCompatActivity {
                     if (!dataSnapshot.getKey().equals(firebaseAuth.getCurrentUser().getUid())) {
                         i++;
                         int counter = i;
-                        Log.e("TAGG", "counter and i value " + i + "," + counter);
 
                         databaseReference.child("messages").orderByChild("time").addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                                Log.e("TAGG", "counter and i value 2 " + i + "," + counter);
 
                                 if (counter == 1) {
-                                    Log.e("TAGG", "onDataChange: clear ");
                                     dataSet.clear();
                                 }
 
