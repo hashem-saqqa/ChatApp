@@ -77,6 +77,8 @@ public class ChatHome extends AppCompatActivity {
         noRecents = findViewById(R.id.noRecents);
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference.keepSynced(true);
+
 
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -113,11 +115,14 @@ public class ChatHome extends AppCompatActivity {
 
             }
         });
+//        MessageModel message = new MessageModel("FX03FhNcRvPI0qvtK2I2QP8tn2I2"
+//                , "lLKycw2a1OfKKUraE4D3jBsVUnd2", "20210930012228", "hi", "0");
+//        databaseReference.child("messages").child("20210930012228").setValue(message);
+
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
 
             getTheRecent();
         }
-
     }
 
 
@@ -132,7 +137,6 @@ public class ChatHome extends AppCompatActivity {
                     if (!dataSnapshot.getKey().equals(firebaseAuth.getCurrentUser().getUid())) {
                         i++;
                         int counter = i;
-
                         databaseReference.child("messages").orderByChild("time").addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
