@@ -247,7 +247,7 @@ public class Chat extends AppCompatActivity {
     }
 
     private void createMessage()  {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss",Locale.US);
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
         String currentTime = sdf.format(new Date());
 
