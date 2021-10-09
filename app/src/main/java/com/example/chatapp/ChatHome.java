@@ -22,12 +22,15 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -137,6 +140,23 @@ public class ChatHome extends AppCompatActivity {
                     if (!dataSnapshot.getKey().equals(firebaseAuth.getCurrentUser().getUid())) {
                         i++;
                         int counter = i;
+//                        databaseReference.runTransaction(new Transaction.Handler() {
+//                            @NonNull
+//                            @Override
+//                            public Transaction.Result doTransaction(@NonNull MutableData currentData) {
+//                                return Transaction.success(currentData);
+//                            }
+//
+//                            @Override
+//                            public void onComplete(@Nullable DatabaseError error, boolean committed, @Nullable DataSnapshot currentData) {
+//                                if (error != null || !committed || currentData == null) {
+//                                    Toast.makeText(ChatHome.this, "Failed to get DataSnapshot", Toast.LENGTH_SHORT).show();
+//                                }else {
+//
+//                                }
+//                            }
+//                        });
+                        databaseReference.keepSynced(true);
                         databaseReference.child("messages").orderByChild("time").addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -147,6 +167,11 @@ public class ChatHome extends AppCompatActivity {
                                 }
 
                                 for (DataSnapshot dataSnapshot1 : snapshot.getChildren()) {
+
+                                    Log.e("TAGs", "onDataChange: " + snapshot);
+                                    Log.e("TAGg", "onDataChange: " + dataSnapshot1);
+                                    Log.e("TAGe", "onDataChange: " + dataSnapshot1.child("receiver").getValue(String.class));
+                                    Log.e("TAGe", "onDataChange: " + dataSnapshot1.child("sender").getValue(String.class));
 
                                     if (dataSnapshot1.child("receiver").getValue(String.class).equals(dataSnapshot.getKey()) &
                                             dataSnapshot1.child("sender").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid()) |

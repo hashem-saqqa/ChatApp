@@ -246,12 +246,12 @@ public class Chat extends AppCompatActivity {
 
     }
 
-    private void createMessage()  {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss",Locale.US);
+    private void createMessage() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US);
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
         String currentTime = sdf.format(new Date());
 
-        Log.e("TAGg", "createMessage: "+currentTime);
+        Log.e("TAGg", "createMessage: " + currentTime);
 
         notify = true;
 
@@ -406,7 +406,8 @@ public class Chat extends AppCompatActivity {
                                     "null",
                                     dataSnapshot.child("status").getValue(String.class)
                             ));
-                            if (dataSnapshot.child("receiver").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid())) {
+                            if (dataSnapshot.child("receiver").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid())
+                                    & dataSnapshot.child("status").getValue(String.class).equals("0")) {
                                 databaseReference.child("messages").child(dataSnapshot.getKey()).child("status").setValue("1");
                             }
                         } else if (dataSnapshot.child("messageImage").exists()) {
@@ -422,7 +423,8 @@ public class Chat extends AppCompatActivity {
                                     dataSnapshot.child("status").getValue(String.class)
                             ));
 
-                            if (dataSnapshot.child("receiver").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid())) {
+                            if (dataSnapshot.child("receiver").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid())
+                                    & dataSnapshot.child("status").getValue(String.class).equals("0")) {
                                 databaseReference.child("messages").child(dataSnapshot.getKey()).child("status").setValue("1");
                             }
                         }
@@ -448,13 +450,9 @@ public class Chat extends AppCompatActivity {
 
     }
 
-    // edit to back to the chatHome and destroy
     public void BackButton(View view) {
-        Intent intent = new Intent(this, ChatHome.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         databaseReference.child("messages").removeEventListener(valueEventListener);
-        startActivity(intent);
-//        finish();
+        finish();
     }
 
     @Override
