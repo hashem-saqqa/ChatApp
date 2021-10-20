@@ -19,7 +19,7 @@ The chat
 <img src="https://user-images.githubusercontent.com/47791578/138109463-e1c43cf6-9af1-4c78-b623-fed5cb623a64.jpeg" width="200" height="400">
 <br>
 <br>
-profile and the uers
+profile and the users
 <br>
 <img src="https://user-images.githubusercontent.com/47791578/138109602-5da0c581-1cb5-4a12-8e15-ef86ca865227.jpeg" width="200" height="400">
 <br>
