@@ -34,8 +34,23 @@ edit the account settings
 <img src="https://user-images.githubusercontent.com/47791578/138110017-85268c10-b436-4fb3-8210-db4627e9c795.jpeg" width="200" height="400">
 <br>
 <br>
-Notification while using the app
+Notification Popup
 <br>
 <img src="https://user-images.githubusercontent.com/47791578/138110301-745f7eb8-c54d-4a9a-b0db-d0032abd4c03.jpeg" width="200" height="400">
+<br>
+<br>
+Notification in notification center
+<br>
+<img src="https://user-images.githubusercontent.com/47791578/138110874-31bea4ff-3de2-4aa3-9a1e-1f3bff49bdcd.jpeg" width="200" height="400">
+<br>
+<br>
+send image to the recents
+<br>
+<img src="https://user-images.githubusercontent.com/47791578/138111026-b82c13a3-31b1-4554-8990-bb4f2b2cc1a8.jpeg" width="200" height="400">
+<br>
+<br>
+search for user in the recents
+<br>
+<img src="https://user-images.githubusercontent.com/47791578/138111185-7a306890-1372-4e6f-875a-912fe8aec3d7.jpeg" width="200" height="400">
 <br>
 <br>
