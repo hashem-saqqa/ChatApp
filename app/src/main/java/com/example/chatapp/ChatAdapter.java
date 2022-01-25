@@ -3,11 +3,16 @@ package com.example.chatapp;
 import android.content.Context;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.TimeZone;
+import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,6 +32,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<MessageModel> dataSet;
     Context context;
     FirebaseAuth firebaseAuth;
+    int clickedPos = -1;
 
     public ChatAdapter(List<MessageModel> dataSet, Context context) {
         this.dataSet = dataSet;
@@ -111,6 +117,13 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             if (messageModel.isLastMsg() & messageModel.getStatus().equals("1")) {
                 senderViewHolder.seenStatus.setVisibility(View.VISIBLE);
             }
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    clickedPos = holder.getAdapterPosition();
+                    return false;
+                }
+            });
 
         } else if (holder.getItemViewType() == 1) {
 
@@ -243,7 +256,6 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             });
             receiverImageViewHolder.receiverMessageTime.setText(hour + ":" + minute);
         }
-
     }
 
     @Override
@@ -251,7 +263,8 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return dataSet.size();
     }
 
-    public class ReceiverViewHolder extends RecyclerView.ViewHolder {
+
+    public class ReceiverViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
 
         private final CircleImageView profileImage;
         private final TextView receiverMessage;
@@ -262,11 +275,25 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             profileImage = itemView.findViewById(R.id.profileImage);
             receiverMessage = itemView.findViewById(R.id.messageReceiverTV);
             receiverMessageTime = itemView.findViewById(R.id.timeReceiverTV);
+            itemView.setOnCreateContextMenuListener(this);
 
+
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            MenuItem Copy = menu.add(0, v.getId(), 0, "Copy");
+            Copy.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    Toast.makeText(context, "this is copy", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            });
         }
     }
 
-    public class SenderViewHolder extends RecyclerView.ViewHolder {
+    public class SenderViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
 
         private final TextView senderMessage;
         private final TextView senderMessageTime;
@@ -278,6 +305,33 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             senderMessage = itemView.findViewById(R.id.messageSenderTV);
             senderMessageTime = itemView.findViewById(R.id.timeSenderTV);
             seenStatus = itemView.findViewById(R.id.seenStatus);
+            itemView.setOnCreateContextMenuListener(this);
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            menu.setHeaderTitle("Select Action");
+            MenuItem Copy = menu.add(0, v.getId(), 0, "Copy");
+            MenuItem Unsend = menu.add(0, v.getId(), 0, "Unsend");
+            TextView test_data = v.findViewById(R.id.timeSenderTV);
+            Copy.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    Toast.makeText(context, "this is copy", Toast.LENGTH_SHORT).show();
+
+                    Log.d("test1", "the time : " + dataSet.get(clickedPos).getTime());
+                    Log.d("test1", "the text: " + dataSet.get(clickedPos).getMessageText());
+
+                    return false;
+                }
+            });
+            Unsend.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    Toast.makeText(context, "this is Unsend", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            });
 
 
         }
@@ -299,7 +353,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    public class SenderImageViewHolder extends RecyclerView.ViewHolder {
+    public class SenderImageViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
 
         private final ImageView senderMessageImage;
         private final TextView senderMessageTime;
@@ -311,7 +365,21 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             senderMessageImage = itemView.findViewById(R.id.messageSenderIV);
             senderMessageTime = itemView.findViewById(R.id.timeSenderTV);
             seenStatus = itemView.findViewById(R.id.seenStatus);
+            itemView.setOnCreateContextMenuListener(this);
 
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            MenuItem Unsend = menu.add(0, v.getId(), 0, "Unsend");
+
+            Unsend.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    Toast.makeText(context, "this is Unsend", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            });
         }
     }
 }

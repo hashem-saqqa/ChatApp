@@ -140,22 +140,7 @@ public class ChatHome extends AppCompatActivity {
                     if (!dataSnapshot.getKey().equals(firebaseAuth.getCurrentUser().getUid())) {
                         i++;
                         int counter = i;
-//                        databaseReference.runTransaction(new Transaction.Handler() {
-//                            @NonNull
-//                            @Override
-//                            public Transaction.Result doTransaction(@NonNull MutableData currentData) {
-//                                return Transaction.success(currentData);
-//                            }
-//
-//                            @Override
-//                            public void onComplete(@Nullable DatabaseError error, boolean committed, @Nullable DataSnapshot currentData) {
-//                                if (error != null || !committed || currentData == null) {
-//                                    Toast.makeText(ChatHome.this, "Failed to get DataSnapshot", Toast.LENGTH_SHORT).show();
-//                                }else {
-//
-//                                }
-//                            }
-//                        });
+
                         databaseReference.keepSynced(true);
                         databaseReference.child("messages").orderByChild("time").addValueEventListener(new ValueEventListener() {
                             @Override
@@ -172,7 +157,7 @@ public class ChatHome extends AppCompatActivity {
                                     Log.e("TAGg", "onDataChange: " + dataSnapshot1);
                                     Log.e("TAGe", "onDataChange: " + dataSnapshot1.child("receiver").getValue(String.class));
                                     Log.e("TAGe", "onDataChange: " + dataSnapshot1.child("sender").getValue(String.class));
-
+                                    if (firebaseAuth.getCurrentUser()!= null) {
                                     if (dataSnapshot1.child("receiver").getValue(String.class).equals(dataSnapshot.getKey()) &
                                             dataSnapshot1.child("sender").getValue(String.class).equals(firebaseAuth.getCurrentUser().getUid()) |
                                             dataSnapshot1.child("sender").getValue(String.class).equals(dataSnapshot.getKey()) &
@@ -195,6 +180,11 @@ public class ChatHome extends AppCompatActivity {
                                         break;
 
 
+                                    }
+                                }else {
+                                        Intent intent = new Intent(getApplicationContext(), Login.class);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        startActivity(intent);
                                     }
 
                                 }

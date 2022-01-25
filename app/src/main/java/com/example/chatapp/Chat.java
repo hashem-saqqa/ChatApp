@@ -103,7 +103,6 @@ public class Chat extends AppCompatActivity {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-
             }
 
             @Override
@@ -117,7 +116,6 @@ public class Chat extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-
 
             }
         });
@@ -174,7 +172,7 @@ public class Chat extends AppCompatActivity {
         });
     }
 
-    public void sendImageOrMsg(View view) throws ParseException {
+    public void sendImageOrMsg(View view) {
         if (!messageET.getText().toString().equals("")) {
             createMessage();
             messageET.getText().clear();
@@ -250,8 +248,6 @@ public class Chat extends AppCompatActivity {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US);
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
         String currentTime = sdf.format(new Date());
-
-        Log.e("TAGg", "createMessage: " + currentTime);
 
         notify = true;
 
