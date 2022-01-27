@@ -1,5 +1,7 @@
 package com.example.chatapp;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.TimeZone;
@@ -15,9 +17,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -32,6 +36,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<MessageModel> dataSet;
     Context context;
     FirebaseAuth firebaseAuth;
+    FirebaseDatabase firebaseDatabase;
     int clickedPos = -1;
 
     public ChatAdapter(List<MessageModel> dataSet, Context context) {
@@ -318,9 +323,11 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     Toast.makeText(context, "this is copy", Toast.LENGTH_SHORT).show();
+//                    Log.d("test1", "the text: " + dataSet.get(clickedPos).getMessageText());
+                    ClipboardManager clipboardManager =  ContextCompat.getSystemService(context,ClipboardManager.class);
+                    ClipData clipData = ClipData.newPlainText("the copied message",dataSet.get(clickedPos).getMessageText());
+                    clipboardManager.setPrimaryClip(clipData);
 
-                    Log.d("test1", "the time : " + dataSet.get(clickedPos).getTime());
-                    Log.d("test1", "the text: " + dataSet.get(clickedPos).getMessageText());
 
                     return false;
                 }
@@ -329,6 +336,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     Toast.makeText(context, "this is Unsend", Toast.LENGTH_SHORT).show();
+                    FirebaseDatabase.getInstance().getReference().child("messages").child(dataSet.get(clickedPos).getTime()).removeValue();
                     return false;
                 }
             });
